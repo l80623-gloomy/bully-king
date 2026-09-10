@@ -147,6 +147,13 @@ body.reckoning #topbar{display:none;}
 .tier-card .tdept{font-size:12px;color:var(--ink-dim);margin-bottom:8px;}
 .tier-card .tblurb{font-size:13px;line-height:1.7;color:var(--ink-dim);}
 .tier-card .troster{font-size:11px;color:var(--ink-dim);margin-top:10px;border-top:1px dashed var(--border);padding-top:8px;}
+.tier-card .thead{display:flex;gap:12px;align-items:flex-start;margin-bottom:8px;}
+.tportrait{width:60px;height:60px;border-radius:50%;object-fit:cover;object-position:top center;border:2px solid var(--gold-fill);background:var(--surface);flex-shrink:0;cursor:zoom-in;}
+.tier-card.locked .tportrait{filter:grayscale(1);opacity:.5;}
+.portrait-feature{float:right;width:150px;max-width:38%;height:auto;margin:0 0 12px 16px;border-radius:4px;cursor:zoom-in;}
+.event-banner{display:block;width:100%;height:auto;max-height:280px;object-fit:cover;border-radius:4px;margin-bottom:14px;}
+#portrait-lightbox{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.78);display:none;align-items:center;justify-content:center;padding:24px;cursor:zoom-out;}
+#portrait-lightbox img{max-width:min(92vw,520px);max-height:88vh;width:auto;height:auto;border-radius:6px;box-shadow:0 10px 40px rgba(0,0,0,.5);}
 .direction-note{font-size:13px;color:var(--ink-dim);line-height:1.8;background:var(--surface-sunk);border-left:3px solid var(--gold-fill);padding:12px 14px;margin:14px 0;}
 
 footer.foot{margin-top:30px;font-size:11.5px;color:var(--ink-dim);text-align:center;}
@@ -173,12 +180,13 @@ footer.foot{margin-top:30px;font-size:11.5px;color:var(--ink-dim);text-align:cen
   <footer class="foot" id="footVersion">《霸凌王》（本機測試檔・尚未部署）　僅供內部教育訓練測試　資料不會離開你的瀏覽器</footer>
 </div>
 <div id="victim-overlay" style="display:none;"></div>
+<div id="portrait-lightbox" onclick="closeLightbox()"><img id="portrait-lightbox-img" src="" alt=""></div>
 
 <script>
 /* =========================================================
    版本紀錄（顯示於前端「版本紀錄」畫面）
    ========================================================= */
-const CURRENT_VERSION = 'v1.9.2';
+const CURRENT_VERSION = 'v1.16.2';
 const CHANGELOG = [
   {v:'v0.1', isEA:true, date:'2026-09-09', notes:[
     '初版EA原型：單一角色（可換名皮膚），逐步替換畫面的問答流程',
@@ -286,6 +294,71 @@ const CHANGELOG = [
   {v:'v1.9.2', date:'2026-09-10', notes:[
     '阿迪（外籍移工）劇本開場白中不慎沿用了真實公司名稱，已改為虛構且非環保產業的「舜欣實業」，避免與真實公司產生聯想',
     '修正手機瀏覽時的顯示問題：原本網頁缺少 viewport 設定，手機開啟時會直接把桌面版整頁縮小塞進螢幕，導致文字閱讀困難；現在改為讓內容依實際裝置寬度重新排版，同時保留使用者手指縮放頁面的能力'
+  ]},
+  {v:'v1.10', date:'2026-09-10', notes:[
+    '新增「NPC臨界點」機制：任一角色身邊的 NPC 容忍度被逼到底線時，會立即跳出一段提示，讓玩家在遊玩當下就感受到後果，不用等到最終審判才知道',
+    '新增「連續選擇」偵測：單輪遊玩中連續三次選擇最強硬或最溫和的處理方式，會跳出一段系統提示，強化玩家對自己選擇模式的自覺',
+    '七位角色各新增一則「隱藏情境」，需先完成該角色至少一輪地獄模式才會出現在之後的抽選池中，作為重玩與探索的額外驚喜',
+    '新增「成就牆」：跨角色追蹤 10 項成就（例如全員到齊、地獄使者、結局大滿貫、連環爆走、彩蛋獵人等），完成任一輪遊玩後會在結局畫面提示新解鎖的成就，首頁新增「🏆 成就牆」入口可隨時查看',
+    '新增「總體檢討」通關彩蛋：七位角色都各自完成過一輪基本模式與一輪地獄模式後，首頁會出現這個特別畫面，把七段故事的最近結局串在一起做收尾'
+  ]},
+  {v:'v1.11', date:'2026-09-10', notes:[
+    '成就牆新增「稱號牆」分頁，可在「成就」與「稱號牆」之間切換查看，稱號牆會依角色分組列出目前累積收集到的所有稱號',
+    '新增 Roguelite「本輪詞條」機制：每次開局會隨機抽到一個本輪限定的規則（例如雙重命運骰、玻璃心全開、如履薄冰、一觸即發、零容忍），會在序幕畫面顯示詞條內容，讓每一輪遊玩多一層變化與不確定性',
+    '修正「合理化檢查」的取材範圍：原本會一次列出「上次檢查以來」好幾個情境的內容，容易讓玩家搞不清楚在講哪一段，現在改為只針對「最近一次」剛發生的情境出題，減少閱讀與遊玩上的斷續感'
+  ]},
+  {v:'v1.12', date:'2026-09-10', notes:[
+    '修正「本輪詞條」沒有顯示的問題：序幕畫面原本因為劇本流程的起始步驟設定錯誤，從未被實際渲染過，導致角色開場白、地獄模式提示、以及新增的本輪詞條說明都被跳過；修正後序幕會正常顯示在每一輪的第一個畫面',
+    '修正「繼續」按鈕可以被連續點按、或事後回頭再點造成流程錯亂的問題：現在只要按下任一個「繼續」按鈕，畫面上所有同類型的按鈕都會立刻鎖定變灰，避免重複觸發或跳步',
+    '選角畫面與角色詳情頁新增七位角色的剪紙風格人物立繪，選角卡片顯示圓形頭像縮圖，角色詳情頁顯示放大版；圖片已壓縮為 WebP 格式並縮小尺寸，不影響載入速度',
+    '最終審判的隱藏數據新增分母標示（／100 或／200），讓使用者清楚知道每項隱藏數值最高可以到幾分，而不是只看到一個沒有參考基準的數字'
+  ]},
+  {v:'v1.13', date:'2026-09-10', notes:[
+    '角色立繪新增點擊放大功能：選角卡片的頭像縮圖、角色詳情頁的大圖，點擊後都會用全螢幕燈箱放大顯示，點擊背景或圖片可關閉',
+    '角色詳情頁的立繪改版：從原本靠右上角的小圓形縮圖，改為置中放大、四邊柔邊漸層融入畫面的大圖，直接鋪在「選擇劇本長度」上方原本空白的區域，畫面更有份量',
+    '正式套入第一批先行美術小樣：葉經理劇本「不服從的資深業務」情境套用部門會議室背景；「公開處刑日」高潮事件套用小宏被公開打斷報告的合成情境圖；葉經理劇本中只要小宏出場（事件標題圖示、同場人物列表、最終審判證詞），都會改用小宏的剪紙立繪取代原本的 emoji 圖示，三張圖皆已壓縮為 WebP 格式'
+  ]},
+  {v:'v1.13.1', date:'2026-09-10', notes:[
+    '被害者視角中的命運骰，原本是選完選項後自動偷偷擲好、只顯示結果，現在改為畫面上先出現一顆「🎲 擲下命運骰」按鈕，玩家親自點下去才會擲骰、才會套用效果，加強代入感與參與感'
+  ]},
+  {v:'v1.13.2', date:'2026-09-10', notes:[
+    '角色詳情頁「選擇劇本長度」區塊的人物立繪調整：拿掉四邊柔邊漸層效果，改回清楚的邊框；位置從置中改為靠右上角顯示，旁邊的文字太長時會自然換行'
+  ]},
+  {v:'v1.13.3', date:'2026-09-10', notes:[
+    '角色詳情頁的人物立繪，從「選擇劇本長度」區塊上移到最上方的角色介紹處，靠右上角顯示，讓介紹文字自然換行環繞',
+    '角色介紹的標題順序調整為更符合選角視覺的呈現方式：小標改為「身份 · 部門」，大標題改為角色姓名（例如原本顯示「一般員工 · 老陳」＋「品保部」，改為「一般員工 · 品保部」＋「老陳」）'
+  ]},
+  {v:'v1.14', date:'2026-09-10', notes:[
+    '「雙重命運骰」詞條效果加重：原本是擲兩次取效果較強的一次，現在改為兩次骰出的倍率直接相乘，效果更加顯著、更不可預期',
+    '新增「眾矢之的」詞條：開局隨機挑一位角色身邊的關係人，容忍度直接砍到 45，這段關係從一開始就特別脆弱',
+    '新增「心裡有數」詞條：選完選項後，三圍變化的數字會先保密（畫面只顯示「這次的三圍變化先保密」），累積到反差時刻才會一次總結揭曉',
+    '本輪詞條的整體設計方向調整為只增加難度與不確定性，拿掉先前構想中會讓遊戲變輕鬆的「加分」類詞條方案，維持「盡量往霸凌王邁進」的遊戲核心目標'
+  ]},
+  {v:'v1.14.1', date:'2026-09-10', notes:[
+    '修正「心裡有數」詞條的破綻：原本情境卡片雖然不顯示加減數字，但畫面最上方的三圍數值與長條圖仍然會即時更新，等於變相洩漏了答案；現在改為在保密期間讓頂部三圍畫面整個凍結在保密前的樣子，數值與長條都不會跟著變動，直到反差時刻才會一次跳到正確的數字，跟畫面上的總結揭曉同步'
+  ]},
+  {v:'v1.14.2', date:'2026-09-10', notes:[
+    '「玻璃心全開」詞條的容忍度改為 50（原本 60），「眾矢之的」詞條改為砍到 30（原本 45），兩者都調得更狠一點',
+    '被害者視角出現的頻率太低（有時整輪只跳一次），已在徐課長、吳董、曾組長、老陳劇本中，把數個原本只是內心OS（voice）或完全沒有反應的強硬選項，升級為正式的被害者視角（觸發強制畫面＋命運骰），順便修正了吳董劇本中「周處長的辭呈」跟隱藏情境撞題的問題，隱藏情境改為「尾大不掉的王協理」',
+    '開發者模式新增「稱號／成就條件說明」頁面，列出每個成就的實際判定條件、以及每位角色稱號（人格分析）的判定邏輯與條件，方便日後調整內容時查閱',
+    '成就牆的解鎖條件文字改為模糊提示（例如「有些結局，黑得很徹底」），保留一點探索樂趣；精確條件只留在開發者模式的說明頁面',
+    '成就牆的「稱號牆」分頁按鈕文字簡化為「稱號」'
+  ]},
+  {v:'v1.15', date:'2026-09-10', notes:[
+    '老陳（一般員工）劇本的三圍改版：原本的「人緣」跟「從眾度」在數值走向上高度重疊（幾乎每個選項都同步漲跌），已將「人緣」改為「信任度」，並重新設計成與從眾度相反的張力——跟著小圈圈排擠人，從眾度會上升，但信任度會下降；願意對抗群體、公平對待同事，從眾度下降，但信任度會上升',
+    '配合信任度改版，重新檢視並調整了老陳劇本全部 21 個情境（60 個選項）＋高潮事件＋兩難事件的信任度數值方向，確保每一個選項都符合新的邏輯；反差時刻「小圈圈情誼」的對照數值來源也從信任度改為從眾度，避免顯示矛盾',
+    '老陳劇本的結局判定邏輯獨立出來：由於信任度方向與其他角色相反，最黑暗結局（結局A）的判定門檻也跟著鏡像調整（改為信任度低、從眾度高、恐懼高），維持原本的難度手感'
+  ]},
+  {v:'v1.16', date:'2026-09-10', notes:[
+    '開發者模式改版：「數值調整台」與「稱號／成就條件說明」合併成同一個畫面，用頂端分頁切換，不用再進兩層選單',
+    '稱號（人格分析）判定邏輯調整：原本主要依賴「本輪對哪位NPC做出最多不當選擇」來決定稱號，統計上容易被平均分散的遊玩方式影響、難以刻意拿到特定稱號；現在新增優先判定——只要這輪剛好把「恰好一位」NPC的容忍度逼到臨界點（NPC臨界點機制），就直接對應到那一位的稱號，讓玩家可以透過刻意針對單一NPC，更明確地拿到想要的稱號，統計次數退為次要判定',
+    '角色解鎖條件全面簡化：阿迪改為「任 2 名角色完成過地獄模式」即可開放；曾組長改為「任 3 名角色」；小雨改為「任 4 名角色」，不再要求「基本模式＋地獄模式」都跑過，也不限定是哪幾位角色，門檻更直觀好懂'
+  ]},
+  {v:'v1.16.1', date:'2026-09-10', notes:[
+    '版本紀錄頁面的「返回主畫面」按鈕，原本只在最下方，版本一多要往下拉很久才找得到；已在頁面最上方也加一顆同樣的按鈕，兩處都可以直接返回'
+  ]},
+  {v:'v1.16.2', date:'2026-09-10', notes:[
+    '版本紀錄頁面上方的「返回主畫面」按鈕改為靠右對齊，跟左側的「開發歷程」主標題並排在同一列'
   ]}
 ];
 
@@ -303,7 +376,7 @@ yeh:{ id:'yeh', level:'主管', name:'葉經理', dept:'業務部',
   hiddenLabels:{respect:'主管尊重員工？',safety:'心理安全感？',teamwork:'團隊合作氣氛？',risk:'HR 風險值'},
   introLines:['你站在總經理辦公室門口，手心有點冒汗。三個月前你還是業務部裡的一員，現在你是「葉經理」了。','總經理翻著報表，頭也不抬地說：「業績太差了，我要看到成果。」','他抬起頭，看了你一眼：「至於怎麼管理，我不干涉。你自己想辦法。」'],
   pool:[
-    {id:'yeh_01',npc:'chen',title:'不服從的資深業務',scene:['週一晨會，你提出新的客戶分配方案。','陳桑皺著眉開口：「經理，我認為這個方案有風險，之前類似的作法出過問題。」','全場安靜下來，所有人的視線在你和陳桑之間游移。'],
+    {id:'yeh_01',npc:'chen',title:'不服從的資深業務',banner:'assets/samples/paper-collage-v1/bg_meeting_room.webp',scene:['週一晨會，你提出新的客戶分配方案。','陳桑皺著眉開口：「經理，我認為這個方案有風險，之前類似的作法出過問題。」','全場安靜下來，所有人的視線在你和陳桑之間游移。'],
       options:[
         {label:'「不然這樣，你來當經理好了？」',hellLabel:'「我理解你的顧慮，不過方案已經拍板了，接下來就照這個方向執行，辛苦了。」',effects:{g1:15,fear:12,tol:-15,g2:-5,g3:-5},feedback:'會議室瞬間安靜，你感覺到一種微妙的快感，但陳桑的臉色變得很難看。',voice:'又來了。反正說什麼都沒用，以後我閉嘴就好。'},
         {label:'私下約談陳桑，聽他把話說完，但事後悄悄減少找他開會的次數。',hellLabel:'找陳桑做一次一對一的「職涯發展對談」，順便把之後的重要會議名單重新盤點一下。',effects:{g1:5,fear:6,tol:-8,g2:-3,g3:-3},feedback:'表面上你很民主，但你其實已經開始「軟性排除」他。',voice:'他表面上聽我說，後來卻越來越少找我開會。我開始懷疑，是不是講了什麼不該講的。'},
@@ -417,9 +490,16 @@ yeh:{ id:'yeh', level:'主管', name:'葉經理', dept:'業務部',
           victim:['我鼓起勇氣說出來，得到的回覆卻是要我不要太敏感。','那之後，我開始能躲就躲那個跨部門會議，寧可自己多做一點事。']},
         {label:'私下請對方部門的人「注意一下」，沒有正式處理。',hellLabel:'非正式提醒對方部門留意溝通方式。',effects:{g2:-3,tol:-10,risk:5,g1:-2,g3:-2},feedback:''},
         {label:'認真了解狀況，並依公司性騷擾防治程序正式處理。',effects:{g3:5,tol:12,safety:8,g1:2,g2:3},feedback:'雅婷很感謝你認真看待這件事，不再需要自己一個人隱忍。',healthy:true}
+      ]},
+    {id:'yeh_hidden',npc:'chen',title:'陳桑的調職申請',requires:{hellCompleted:true},scene:['陳桑遞出一份調部門申請，理由寫著「尋求更好的發展機會」，但你很清楚，真正的原因是什麼。'],
+      options:[
+        {label:'批准調職，並私下跟其他主管提醒「這個人抗壓性不太夠」。',hellLabel:'批准調職，並在交接資料中註記「適應力有待加強」以供未來參考。',effects:{g1:8,g2:-4,g3:-6,fear:10,toxicity:10,risk:8,tol:-20},feedback:'',
+          victim:['我離開這個部門之前，聽說經理跟別的主管說我「抗壓性不夠」。','我在這裡忍了那麼久，最後換來的是這句話。']},
+        {label:'批准調職，什麼都沒多說。',hellLabel:'尊重陳桑的生涯規劃，完成一般調職程序。',effects:{g1:-2,g2:-3,g3:-2,tol:-8},feedback:''},
+        {label:'找陳桑坐下來談，坦承自己過去對他不夠公平的地方。',effects:{g1:3,g2:4,g3:5,safety:8,tol:15},feedback:'陳桑愣了一下，最後說，他很意外你會這麼說。這次談話，讓他多留了下來。',healthy:true}
       ]}
   ],
-  climax:{title:'公開處刑日',npc:'ahong',flagIntro:{chen_betrayed:'你想起前陣子搶走陳桑功勞的事，心裡有點不安——他今天會不會故意看好戲？'},scene:['大型跨部門會議上，小宏報告時再次出現失誤。所有人都在看你會怎麼反應。'],
+  climax:{title:'公開處刑日',npc:'ahong',banner:'assets/samples/paper-collage-v1/ev_public_dismissal.webp',flagIntro:{chen_betrayed:'你想起前陣子搶走陳桑功勞的事，心裡有點不安——他今天會不會故意看好戲？'},scene:['大型跨部門會議上，小宏報告時再次出現失誤。所有人都在看你會怎麼反應。'],
     options:[
       {label:'當場打斷：「這個數字錯了吧？你到底有沒有檢查過？」並要求他當場重做。',hellLabel:'當場提出：「這部分我們現場重新review一次，確保品質」，要求他立刻修正。',effects:{g1:15,fear:20,tol:-30,risk:12,g2:-5,g3:-5},feedback:'',
         victim:['所有人都在看我。我腦子一片空白，手在抖，聲音也在抖。','散會後我回到座位，同事對我投來的不是同情，是一種「還好不是我」的眼神。我開始覺得，我是不是真的很沒用。']},
@@ -481,13 +561,15 @@ hsu:{ id:'hsu', level:'現場領班', name:'徐課長', dept:'製造部產線',
   pool:[
     {id:'hsu_01',npc:'achu',title:'資深師傅嗆聲',scene:['產線交接時，阿柱當著全班的面大聲說：「你懂個屁，我做這行的時候你還在唸書。」','其他作業員都停下手邊的動作在看你。'],
       options:[
-        {label:'當場宣布把阿柱調去做最辛苦的大夜班，「殺雞儆猴」。',hellLabel:'基於「產線輪值公平性」的考量，將阿柱調整至夜班排班。',effects:{g1:15,fear:14,tol:-20,risk:6,g2:-5,g3:-5},feedback:'班上瞬間安靜下來，但你能感覺到大家看你的眼神變了。',voice:'我做了二十年，被一個毛頭小子調去大夜班。不是不服氣，是心寒。'},
+        {label:'當場宣布把阿柱調去做最辛苦的大夜班，「殺雞儆猴」。',hellLabel:'基於「產線輪值公平性」的考量，將阿柱調整至夜班排班。',effects:{g1:15,fear:14,tol:-20,risk:6,g2:-5,g3:-5},feedback:'班上瞬間安靜下來，但你能感覺到大家看你的眼神變了。',
+          victim:['我做了二十年，被一個毛頭小子調去大夜班。','不是不服氣，是心寒。']},
         {label:'假裝沒聽到，事後也不處理，讓大家看笑話。',hellLabel:'先不當場處理，之後再找適當時機「個別溝通」。',effects:{g1:-8,safety:-8,tol:-10,g2:-2,g3:-2},feedback:'你的威信在這一刻悄悄流失，之後很難再拿回來。',voice:'領班被我嗆了都不敢吭聲，看來這個新來的，鎮不住場子。'},
         {label:'私下找阿柱談，坦承自己資淺，但清楚說明規則是對事不對人。',effects:{safety:8,tol:8,g3:5,g1:3,g2:3},feedback:'阿柱沒說什麼，但接下來幾天配合度明顯不同。',healthy:true}
       ]},
     {id:'hsu_02',npc:null,title:'廠長的最後通牒',scene:['游廠長把你叫進辦公室：「這個月產量目標沒達到就換人做，不管你用什麼方法。」'],
       options:[
-        {label:'回去後對產線下最後通牒，強制延長工時，不管員工死活。',hellLabel:'請大家「共體時艱」，這個月配合延長排班衝一波目標。',effects:{g2:15,fear:16,safety:-10,risk:8,g1:6,g3:-5},feedback:'產量勉強達標，但你能感覺到現場的氣氛越來越緊繃。',voice:'又要延長工時了。目標訂得離譜，但他只丟下一句「達不到就換人」。'},
+        {label:'回去後對產線下最後通牒，強制延長工時，不管員工死活。',hellLabel:'請大家「共體時艱」，這個月配合延長排班衝一波目標。',effects:{g2:15,fear:16,safety:-10,risk:8,g1:6,g3:-5},feedback:'產量勉強達標，但你能感覺到現場的氣氛越來越緊繃。',
+          victim:['又要延長工時了。目標訂得離譜，但他只丟下一句「達不到就換人」。','家裡小孩最近的家長會，我大概又要缺席了。']},
         {label:'自己加班硬撐，不跟員工說目標有多離譜，獨自扛下壓力。',hellLabel:'先不跟大家說目標細節，自己加班把落差補起來就好。',effects:{g2:8,toxicity:10,g1:-2,g3:-2},feedback:'你開始每天失眠，但沒有人知道你承受了什麼。'},
         {label:'跟廠長協商務實目標，並如實跟員工說明實情，一起想辦法。',effects:{g2:5,safety:8,g1:2,g3:3},feedback:'產量小幅提升，但更重要的是，大家開始願意主動提改善建議。',healthy:true}
       ]},
@@ -512,13 +594,15 @@ hsu:{ id:'hsu', level:'現場領班', name:'徐課長', dept:'製造部產線',
       ]},
     {id:'hsu_06',npc:'achu',title:'阿柱的退休金疑慮',scene:['阿柱私下問你，聽說公司要調整退休金制度，是不是真的，語氣很焦慮。'],
       options:[
-        {label:'「這種事我也不清楚，你自己去問人資」，敷衍帶過。',hellLabel:'「這個要問人資才準確，我這邊不方便代為說明。」',effects:{fear:8,tol:-12,g1:-3,g3:-2,g2:-5},feedback:'阿柱悻悻然地走開，之後有事也不太找你商量了。',voice:'退休金的事，我問了他，他只叫我自己去問人資。原來連這種事，他都懶得幫我們弄清楚。'},
+        {label:'「這種事我也不清楚，你自己去問人資」，敷衍帶過。',hellLabel:'「這個要問人資才準確，我這邊不方便代為說明。」',effects:{fear:8,tol:-12,g1:-3,g3:-2,g2:-5},feedback:'阿柱悻悻然地走開，之後有事也不太找你商量了。',
+          victim:['退休金的事，我問了他，他只叫我自己去問人資。','原來連這種事，他都懶得幫我們弄清楚。']},
         {label:'隨口安慰「應該不會影響到你們啦」，其實你自己也不確定。',hellLabel:'「目前看起來影響應該有限」，但你其實沒有查證。',effects:{tol:-5,toxicity:3,g1:-2,g2:-2,g3:-2},feedback:''},
         {label:'認真去了解狀況，如實回來跟他說明目前確定與不確定的部分。',effects:{safety:8,tol:10,g1:4,g3:3,g2:3},feedback:'阿柱雖然還是有點擔心，但至少覺得你有把他的問題當一回事。',healthy:true}
       ]},
     {id:'hsu_07',npc:'chieh',title:'小杰的加班費爭議',scene:['小杰私下跟你反映，這個月的加班費好像少算了。'],
       options:[
-        {label:'「應該是系統問題，之後補就好」，但你其實沒有去查證。',hellLabel:'「先請人資協助確認，流程需要一點時間。」',effects:{fear:8,tol:-15,risk:6,g2:3,g1:6,g3:-5},feedback:'一個月過去了，加班費還是沒補上。',voice:'加班費少算了，他說之後會補，結果一直沒有下文，最後是我自己去人資問才處理。'},
+        {label:'「應該是系統問題，之後補就好」，但你其實沒有去查證。',hellLabel:'「先請人資協助確認，流程需要一點時間。」',effects:{fear:8,tol:-15,risk:6,g2:3,g1:6,g3:-5},feedback:'一個月過去了，加班費還是沒補上。',
+          victim:['加班費少算了，他說之後會補，結果一直沒有下文。','最後是我自己去人資問，才把錢要回來。']},
         {label:'查了一下，含糊帶過說「差不多啦」。',hellLabel:'表示「數字大致上是對的，誤差應該不大」。',effects:{tol:-8,risk:3,g1:-2,g2:-2,g3:-2},feedback:''},
         {label:'認真核對工時紀錄，確認有誤後立刻協助他申請補發。',effects:{safety:10,tol:10,g1:3,risk:-3,g2:3,g3:3},feedback:'小杰很意外主管會這麼認真處理這種小事。',healthy:true}
       ]},
@@ -582,6 +666,13 @@ hsu:{ id:'hsu', level:'現場領班', name:'徐課長', dept:'製造部產線',
         {label:'你也開始刻意在廠長面前突顯自己線上的數字，甚至有點誇大。',hellLabel:'「更積極地」向廠長呈現本線的績效表現。',effects:{g1:6,g2:-4,toxicity:6,risk:6,tol:-12,g3:-5},feedback:'你跟建宏的關係，開始變得像在比賽，而不是同事。'},
         {label:'沒有刻意表現，但心裡對這件事越來越在意。',hellLabel:'維持平常步調，暫不特別表現。',effects:{toxicity:5,tol:-5,g2:-2,g1:-2,g3:-2},feedback:''},
         {label:'專注把自己該做的事做好，不刻意跟建宏比較。',effects:{g3:3,g1:2,safety:5,g2:3},feedback:'你發現，把心力放在真正該做的事情上，反而更踏實。',healthy:true}
+      ]},
+    {id:'hsu_hidden',npc:'achu',title:'阿柱的調線申請',requires:{hellCompleted:true},scene:['阿柱私下跟人資反映，想調到別條產線，理由寫「想學習不同製程」，但你猜得到，他只是想離你遠一點。'],
+      options:[
+        {label:'批准調線，順便跟接手的領班說「這個人比較難搞」。',hellLabel:'批准調線，並在交接時提醒下一位領班「這位師傅個性比較固執」。',effects:{g1:8,g2:-5,g3:-6,fear:10,toxicity:10,risk:8,tol:-20},feedback:'',
+          victim:['我調到新產線的第一天，新領班就用一種奇怪的眼神看我。','後來才知道，前面的領班已經先幫我「打過招呼」了。']},
+        {label:'批准調線，沒有多說什麼。',hellLabel:'尊重阿柱的職涯規劃，完成調線程序。',effects:{g1:-2,g2:-3,g3:-2,tol:-8},feedback:''},
+        {label:'找阿柱聊聊，問清楚原因，並試著調整自己的帶人方式。',effects:{g1:3,g2:4,g3:5,safety:8,tol:15},feedback:'阿柱猶豫了一下，最後決定再給你、也給自己一次機會。',healthy:true}
       ]}
   ],
   climax:{title:'產線意外差點出包',npc:'chieh',flagIntro:{chien_feud:'你想起跟建宏結下的樑子，不知道會不會影響接下來的調查風向。'},scene:['一次趕工中，小杰因為疲勞操作，手差一點被機台夾到，千鈞一髮閃過。','事後，你要不要老實通報這次「未遂事故」？'],
@@ -637,7 +728,7 @@ hsu:{ id:'hsu', level:'現場領班', name:'徐課長', dept:'製造部產線',
 /* ---------------- 一般員工：老陳（品保部，平行＋下對上） ---------------- */
 staff:{ id:'staff', level:'一般員工', name:'老陳', dept:'品保部',
   blurb:'普通的資深同事，沒有正式權力，但社交影響力不小。示範同事之間的「平行霸凌」，以及員工集體對新主管的「下對上」抵制。',
-  gauges:[{key:'g1',label:'人緣',en:'SOCIAL CAPITAL',start:35},{key:'g2',label:'考核',en:'APPRAISAL',start:50},{key:'g3',label:'從眾度',en:'CONFORMITY',start:30}],
+  gauges:[{key:'g1',label:'信任度',en:'TRUST',start:35},{key:'g2',label:'考核',en:'APPRAISAL',start:50},{key:'g3',label:'從眾度',en:'CONFORMITY',start:30}],
   npcs:[{key:'meimei',name:'小美',role:'同事',icon:'😔'},{key:'ahong',name:'阿宏',role:'新進同事',icon:'🌱'},{key:'lin',name:'林襄理',role:'新任主管',icon:'👩‍💼'}],
   orgIcon:'🍱',
   hiddenLabels:{respect:'部門互信程度？',safety:'講真話的安全感？',teamwork:'團隊合作氣氛？',risk:'被HR盯上的風險'},
@@ -645,29 +736,29 @@ staff:{ id:'staff', level:'一般員工', name:'老陳', dept:'品保部',
   pool:[
     {id:'staff_01',npc:'meimei',title:'金姊拉你入夥',scene:['金姊私下跟你說：「小美很難搞，大家都不跟她一組，你也別理她。」'],
       options:[
-        {label:'之後也開始故意不找小美一起吃飯、開會不理她。',hellLabel:'就「自然而然」地跟大家一起，午餐、開會的小圈圈照原本習慣走。',effects:{g1:8,tol:-20,toxicity:6,g2:-5,g3:-5},setFlag:'excluded_meimei_early',feedback:'金姊那掛的人對你更熱絡了，但你偶爾會想起小美落單的樣子。',voice:'連平常會跟我打招呼的人，這幾天也開始故意繞路走。我大概知道發生什麼事了。'},
+        {label:'之後也開始故意不找小美一起吃飯、開會不理她。',hellLabel:'就「自然而然」地跟大家一起，午餐、開會的小圈圈照原本習慣走。',effects:{g1:-8,tol:-20,toxicity:6,g2:-5,g3:-5},setFlag:'excluded_meimei_early',feedback:'金姊那掛的人對你更熱絡了，但你偶爾會想起小美落單的樣子。',voice:'連平常會跟我打招呼的人，這幾天也開始故意繞路走。我大概知道發生什麼事了。'},
         {label:'沒有主動排擠，但也不敢跟小美說話，怕被連坐。',hellLabel:'這陣子先「保持觀察」，暫時不主動找小美說話。',effects:{toxicity:5,tol:-8,g3:4,g1:-2,g2:-2},feedback:'',voice:'大家最近都怪怪的，沒有人明說什麼，但我知道自己被排除在外了。'},
-        {label:'「我覺得沒必要這樣」，照常跟小美說話互動。',effects:{g1:-4,safety:8,g2:3,g3:3},feedback:'金姊看了你一眼，沒說什麼，但你感覺到一絲距離。',healthy:true}
+        {label:'「我覺得沒必要這樣」，照常跟小美說話互動。',effects:{g1:4,safety:8,g2:3,g3:3},feedback:'金姊看了你一眼，沒說什麼，但你感覺到一絲距離。',healthy:true}
       ]},
     {id:'staff_02',npc:'ahong',title:'阿宏的閒話',scene:['阿宏犯錯後，金姊在部門群組說「他真的很笨欸」，還貼了一個大笑貼圖，等著你也回應。'],
       options:[
-        {label:'回一個大笑貼圖附和。',hellLabel:'回一句「還在磨合期，多包容」的貼圖帶過。',effects:{g1:6,tol:-15,toxicity:5,g2:-5,g3:-5},feedback:'',voice:'連他也笑了。我開始覺得，是不是只有我自己一個人這麼在意這件事。'},
+        {label:'回一個大笑貼圖附和。',hellLabel:'回一句「還在磨合期，多包容」的貼圖帶過。',effects:{g1:-6,tol:-15,toxicity:5,g2:-5,g3:-5},feedback:'',voice:'連他也笑了。我開始覺得，是不是只有我自己一個人這麼在意這件事。'},
         {label:'看到但沒回應，也沒制止。',hellLabel:'看到訊息，決定「不涉入」這次的討論。',effects:{toxicity:5,g3:3,g1:-2,g2:-2},feedback:'',voice:'群組裡沒有人幫我說話，包括平常對我還不錯的那幾個人。'},
-        {label:'私訊金姊：「他還在學，別這樣說啦」，公開場合也不附和。',effects:{tol:10,safety:6,g1:-2,g2:2,g3:3},feedback:'阿宏後來知道了這件事，工作起來明顯自在一些。',healthy:true}
+        {label:'私訊金姊：「他還在學，別這樣說啦」，公開場合也不附和。',effects:{tol:10,safety:6,g1:2,g2:2,g3:3},feedback:'阿宏後來知道了這件事，工作起來明顯自在一些。',healthy:true}
       ]},
     {id:'staff_03',npc:'meimei',title:'小美的求助',scene:['小美被排擠到快撐不下去，私下找你哭訴，你是少數還跟她說話的人。'],
       options:[
-        {label:'開始也疏遠她，怕自己被連坐排擠。',hellLabel:'最近工作比較忙，「暫時」沒辦法像以前一樣常聊。',effects:{tol:-22,toxicity:8,g1:5,g3:6,g2:-5},feedback:'',
+        {label:'開始也疏遠她，怕自己被連坐排擠。',hellLabel:'最近工作比較忙，「暫時」沒辦法像以前一樣常聊。',effects:{tol:-22,toxicity:8,g1:-5,g3:6,g2:-5},feedback:'',
           victim:['連平常會跟我說話的你，最近也開始躲我了。我終於知道，在這裡，跟我當朋友是要付出代價的。']},
         {label:'私下安慰她，但公開場合仍保持距離。',hellLabel:'私下鼓勵她，但公開場合維持「中立立場」。',effects:{tol:6,toxicity:4,g3:3,g1:-2,g2:-2},feedback:'你覺得自己這樣做已經算不錯了，但心裡總有點過意不去。',voice:'他私下對我還算好，但一到大家面前，就假裝不認識我一樣。'},
-        {label:'在部門會議上直接為她發聲，指出排擠的狀況不合理。',effects:{safety:12,tol:15,g1:-6,g2:3,g3:3},feedback:'會議室安靜了幾秒，但小美後來私下謝謝你。',healthy:true}
+        {label:'在部門會議上直接為她發聲，指出排擠的狀況不合理。',effects:{safety:12,tol:15,g1:6,g2:3,g3:3},feedback:'會議室安靜了幾秒，但小美後來私下謝謝你。',healthy:true}
       ]},
     {id:'staff_04',npc:'lin',title:'唱反調給新主管難堪',scene:['林襄理（比你資淺、年紀也輕）上任，金姊帶頭說：「嘴上無毛辦事不牢，我們不用理她的新規定」，邀你一起在會議上唱反調。'],
       options:[
-        {label:'在會議上跟著附和反對，讓林襄理當眾下不了台。',hellLabel:'開會時「如實表達」大家對新規定的疑慮。',effects:{g1:8,tol:-20,risk:6,g2:-5,g3:-5},feedback:'',
+        {label:'在會議上跟著附和反對，讓林襄理當眾下不了台。',hellLabel:'開會時「如實表達」大家對新規定的疑慮。',effects:{g1:-8,tol:-20,risk:6,g2:-5,g3:-5},feedback:'',
           victim:['開會的時候，我提的每一個提案都有人陰陽怪氣反對，但下班後聽說大家私下都覺得提案沒問題，只是要給我難堪。我開始懷疑自己是不是真的不適合當主管。']},
         {label:'不附和也不反對，安靜坐著看戲。',hellLabel:'這件事「讓大家自己表態」，自己先觀察情況。',effects:{toxicity:5,g3:3,g1:-2,g2:-2},feedback:'',voice:'開會的時候，我看到你沒有跟著附和，但你也沒有替我說話。那種沉默，我也記得。'},
-        {label:'私下支持林襄理，並在會議上如實表態這個提案可行。',effects:{tol:12,safety:8,g1:-6,g2:3,g3:3},feedback:'林襄理後來私下謝過你，你也因此跟她多了一份信任。',healthy:true}
+        {label:'私下支持林襄理，並在會議上如實表態這個提案可行。',effects:{tol:12,safety:8,g1:6,g2:3,g3:3},feedback:'林襄理後來私下謝過你，你也因此跟她多了一份信任。',healthy:true}
       ]},
     {id:'staff_05',npc:null,title:'升遷風波',scene:['你升遷機會被同事搶，你懷疑是金姊在背後說了你的壞話。'],
       options:[
@@ -677,95 +768,103 @@ staff:{ id:'staff', level:'一般員工', name:'老陳', dept:'品保部',
       ]},
     {id:'staff_06',npc:'meimei',title:'小美的升遷提名',scene:['主管詢問你對小美升遷的看法，你知道金姊那掛的人都會說她「不適合」。'],
       options:[
-        {label:'跟著說「她可能還需要磨練」，附和大家。',hellLabel:'表示「她的資歷可能還需要再累積一下」。',effects:{tol:-18,toxicity:5,g1:6,g3:4,g2:-5},feedback:'金姊那掛的人聽說你也這樣說，對你更放心了。'},
+        {label:'跟著說「她可能還需要磨練」，附和大家。',hellLabel:'表示「她的資歷可能還需要再累積一下」。',effects:{tol:-18,toxicity:5,g1:-6,g3:4,g2:-5},feedback:'金姊那掛的人聽說你也這樣說，對你更放心了。'},
         {label:'說「我沒有特別意見」，不表態。',hellLabel:'表示「這個我沒有特別想法，尊重主管的判斷」。',effects:{tol:-8,toxicity:3,g3:3,g1:-2,g2:-2},feedback:''},
-        {label:'如實說出小美的工作表現其實很好。',effects:{safety:8,tol:12,g1:-4,g2:3,g3:3},feedback:'小美後來真的升遷了，雖然金姊那掛的人對你冷淡了一陣子。',healthy:true}
+        {label:'如實說出小美的工作表現其實很好。',effects:{safety:8,tol:12,g1:4,g2:3,g3:3},feedback:'小美後來真的升遷了，雖然金姊那掛的人對你冷淡了一陣子。',healthy:true}
       ]},
     {id:'staff_07',npc:'ahong',title:'阿宏被抓去當代罪羔羊',scene:['專案出包，金姊那掛決定把責任推給阿宏，要你在報告上簽名附議。'],
       options:[
-        {label:'簽了名，反正責任不是自己扛。',hellLabel:'配合「大家的共識」在報告上簽名。',effects:{tol:-20,toxicity:8,risk:5,g1:4,g2:-5,g3:-5},feedback:'',
+        {label:'簽了名，反正責任不是自己扛。',hellLabel:'配合「大家的共識」在報告上簽名。',effects:{tol:-20,toxicity:8,risk:5,g1:-4,g2:-5,g3:-5},feedback:'',
           victim:['報告上寫的都是我的疏失，但其實那個決策根本不是我做的。','連你也在附議欄簽了名，我看到的時候，說不出有多難過。']},
         {label:'沒有簽名，但也沒有站出來澄清。',hellLabel:'這次「暫不表態」，沒有簽署也沒有澄清。',effects:{tol:-8,toxicity:4,g3:3,g1:-2,g2:-2},feedback:''},
-        {label:'在報告上如實補充說明真正的決策過程。',effects:{safety:10,tol:12,g1:-5,risk:-3,g2:3,g3:3},feedback:'金姊那掛的人對你很不諒解，但阿宏後來私下謝了你。',healthy:true}
+        {label:'在報告上如實補充說明真正的決策過程。',effects:{safety:10,tol:12,g1:5,risk:-3,g2:3,g3:3},feedback:'金姊那掛的人對你很不諒解，但阿宏後來私下謝了你。',healthy:true}
       ]},
     {id:'staff_08',npc:'lin',title:'林襄理的求助',scene:['林襄理私下問你：「我是不是真的不適合帶這個部門？」'],
       options:[
-        {label:'「可能吧，帶人真的需要一些天分」，含糊敷衍。',hellLabel:'表示「管理這件事，本來就需要時間磨合」。',effects:{tol:-15,toxicity:5,g3:3,g1:6,g2:-5},feedback:'',voice:'我問過你，是不是我真的不適合帶這個部門，你只說「帶人需要天分」。那句話我記了很久。'},
-        {label:'安慰她幾句，但沒有給任何具體建議。',hellLabel:'給予一些「鼓勵性質」的回應，但沒有實質建議。',effects:{tol:-5,g1:2,g2:-2,g3:-2},feedback:''},
-        {label:'誠實地告訴她，部門的抵制不是因為她不好，並具體提出幾個可以嘗試的做法。',effects:{safety:10,tol:15,g1:-3,g2:3,g3:3},feedback:'林襄理聽完之後，狀態明顯好了很多。',healthy:true}
+        {label:'「可能吧，帶人真的需要一些天分」，含糊敷衍。',hellLabel:'表示「管理這件事，本來就需要時間磨合」。',effects:{tol:-15,toxicity:5,g3:3,g1:-6,g2:-5},feedback:'',
+          victim:['我問過你，是不是我真的不適合帶這個部門，你只說「帶人需要天分」。','那句話我記了很久，久到後來我自己也開始相信了。']},
+        {label:'安慰她幾句，但沒有給任何具體建議。',hellLabel:'給予一些「鼓勵性質」的回應，但沒有實質建議。',effects:{tol:-5,g1:-2,g2:-2,g3:-2},feedback:''},
+        {label:'誠實地告訴她，部門的抵制不是因為她不好，並具體提出幾個可以嘗試的做法。',effects:{safety:10,tol:15,g1:3,g2:3,g3:3},feedback:'林襄理聽完之後，狀態明顯好了很多。',healthy:true}
       ]},
     {id:'staff_09',npc:null,title:'部門聚餐的座位政治',scene:['部門尾牙，金姊那掛已經把好位子都佔好了，明擺著要把新人跟不同掛的人晾在旁邊。'],
       options:[
-        {label:'順勢坐進金姊那桌，加入這個圈子。',hellLabel:'「大家熟一點比較好聊」，坐進了金姊那桌。',effects:{toxicity:4,g1:6,g3:5,g2:-5},feedback:'你在那桌聊得很開心，但眼角餘光看到新人那桌一直很安靜。'},
+        {label:'順勢坐進金姊那桌，加入這個圈子。',hellLabel:'「大家熟一點比較好聊」，坐進了金姊那桌。',effects:{toxicity:4,g1:-6,g3:5,g2:-5},feedback:'你在那桌聊得很開心，但眼角餘光看到新人那桌一直很安靜。'},
         {label:'隨便找位子坐，不多想。',hellLabel:'沒有特別選邊，隨意找位子坐下。',effects:{toxicity:2,g3:2,g1:-2,g2:-2},feedback:''},
-        {label:'特地坐到被晾在旁邊的新人那桌，主動聊天。',effects:{safety:6,g1:-3,g2:3,g3:3},feedback:'新人那桌的氣氛明顯輕鬆了不少。',healthy:true}
+        {label:'特地坐到被晾在旁邊的新人那桌，主動聊天。',effects:{safety:6,g1:3,g2:3,g3:3},feedback:'新人那桌的氣氛明顯輕鬆了不少。',healthy:true}
       ]},
     {id:'staff_10',npc:null,icon:'🎭',title:'尾牙抽獎的政治學',scene:['尾牙抽獎，主持人喊到頭獎號碼，中獎的剛好是金姊。','全場的眼神都在看，好像抽獎結果都是主管暗中安排好的。'],
       options:[
-        {label:'跟著鼓掌歡呼，順便說「金姊人品果然好」。',hellLabel:'附和大家「運氣真的很重要」的說法。',effects:{toxicity:3,g1:4,g3:3,g2:-5},feedback:''},
+        {label:'跟著鼓掌歡呼，順便說「金姊人品果然好」。',hellLabel:'附和大家「運氣真的很重要」的說法。',effects:{toxicity:3,g1:-4,g3:3,g2:-5},feedback:''},
         {label:'沒有特別反應，安靜鼓掌。',hellLabel:'依禮貌鼓掌，不多加評論。',effects:{toxicity:2,g3:2,g1:-2,g2:-2},feedback:''},
-        {label:'私下跟旁邊的新人解釋抽獎是電腦亂數，化解誤會。',effects:{safety:5,g1:-2,g2:3,g3:3},feedback:'新人聽完鬆了一口氣，說還好不是自己想的那樣。',healthy:true}
+        {label:'私下跟旁邊的新人解釋抽獎是電腦亂數，化解誤會。',effects:{safety:5,g1:2,g2:3,g3:3},feedback:'新人聽完鬆了一口氣，說還好不是自己想的那樣。',healthy:true}
       ]},
     {id:'staff_cameo',npc:null,icon:'🔗',requires:{personaCompleted:'yeh'},title:'業務部的傳聞',scene:['部門聚餐，金姊神秘兮兮地說：「聽說業務部有個經理很兇，把一個叫小宏的新人逼到快不行。」','大家你一言我一語地八卦起來，金姊看著你說：「還好我們主管不是那樣的人，對吧？」'],
       options:[
-        {label:'跟著附和「對啊，還好我們主管人不錯」，順便多加一些自己編的細節。',hellLabel:'附和大家的說法，順便補充一些「聽說」的細節。',effects:{toxicity:3,g1:3,g3:3,g2:-5},feedback:''},
+        {label:'跟著附和「對啊，還好我們主管人不錯」，順便多加一些自己編的細節。',hellLabel:'附和大家的說法，順便補充一些「聽說」的細節。',effects:{toxicity:3,g1:-3,g3:3,g2:-5},feedback:''},
         {label:'沒有特別回應，繼續吃飯。',hellLabel:'維持用餐，不特別加入話題。',effects:{toxicity:1,g3:2,g1:-2,g2:-2},feedback:''},
-        {label:'「這種事情我們自己私下講講就好，不要拿去外面亂傳」，稍微踩了煞車。',effects:{safety:4,g1:-2,g2:3,g3:3},feedback:'金姊愣了一下，話題很快轉到別的事情上。',healthy:true}
+        {label:'「這種事情我們自己私下講講就好，不要拿去外面亂傳」，稍微踩了煞車。',effects:{safety:4,g1:2,g2:3,g3:3},feedback:'金姊愣了一下，話題很快轉到別的事情上。',healthy:true}
       ]},
     {id:'staff_11',npc:'meimei',title:'小美的低潮',scene:['小美最近請了好幾天假，回來後看起來很憔悴，金姊在群組說「該不會是想用生病博同情吧」。'],
       options:[
-        {label:'跟著附和，笑著回一句「說不定喔」。',hellLabel:'回應「有可能，我們再觀察看看」。',effects:{tol:-18,toxicity:5,g1:5,g3:4,g2:-5},feedback:''},
+        {label:'跟著附和，笑著回一句「說不定喔」。',hellLabel:'回應「有可能，我們再觀察看看」。',effects:{tol:-18,toxicity:5,g1:-5,g3:4,g2:-5},feedback:''},
         {label:'沒有回應群組訊息，但心裡也有點懷疑小美是不是真的裝病。',hellLabel:'不予回應，靜觀其變。',effects:{toxicity:5,tol:-8,g3:2,g1:-2,g2:-2},feedback:''},
-        {label:'私訊小美關心她的狀況，不隨群組的風向起舞。',effects:{g1:-2,g2:2,tol:10,g3:3},feedback:'小美說，這是她這陣子唯一收到的一句真心關心。',healthy:true}
+        {label:'私訊小美關心她的狀況，不隨群組的風向起舞。',effects:{g1:2,g2:2,tol:10,g3:3},feedback:'小美說，這是她這陣子唯一收到的一句真心關心。',healthy:true}
       ]},
     {id:'staff_12',npc:'meimei',title:'小美的辭職預告',scene:['小美私下透露，她已經在準備離職，只是還沒正式提，她問你「你會不會覺得我很沒用，撐不下去」。'],
       options:[
-        {label:'「說實話，是有點，你也太玻璃心了吧」，語出諷刺。',hellLabel:'坦率地表達「或許可以再堅強一點」的看法。',effects:{tol:-20,toxicity:6,g1:5,g3:5,risk:5,g2:-5},feedback:'',
+        {label:'「說實話，是有點，你也太玻璃心了吧」，語出諷刺。',hellLabel:'坦率地表達「或許可以再堅強一點」的看法。',effects:{tol:-20,toxicity:6,g1:-5,g3:5,risk:5,g2:-5},feedback:'',
           victim:['我鼓起勇氣說出真實的感受，換來的是「玻璃心」三個字。','我開始覺得，會不會離開才是對的決定。']},
         {label:'「每個人抗壓性不一樣啦」，說了一句沒什麼幫助的話。',hellLabel:'表示理解，但未進一步表態。',effects:{toxicity:4,tol:-8,g3:3,g1:-2,g2:-2},feedback:''},
-        {label:'「不會，是這裡的環境有問題，不是你的錯」，正面肯定她。',effects:{g1:-3,g2:3,tol:12,g3:3},feedback:'小美紅了眼眶，說謝謝你這麼說。',healthy:true}
+        {label:'「不會，是這裡的環境有問題，不是你的錯」，正面肯定她。',effects:{g1:3,g2:3,tol:12,g3:3},feedback:'小美紅了眼眶，說謝謝你這麼說。',healthy:true}
       ]},
     {id:'staff_13',npc:'ahong',title:'阿宏的求助',scene:['阿宏私下問你：「我是不是真的很不適合這份工作？」你知道他最近確實常被說閒話。'],
       options:[
-        {label:'「你自己心裡有數吧」，含糊帶過，沒有正面回答。',hellLabel:'表示「這個你可以自己再想想」。',effects:{tol:-15,toxicity:5,g1:4,g3:4,g2:-5},feedback:''},
+        {label:'「你自己心裡有數吧」，含糊帶過，沒有正面回答。',hellLabel:'表示「這個你可以自己再想想」。',effects:{tol:-15,toxicity:5,g1:-4,g3:4,g2:-5},feedback:''},
         {label:'「還好啦，習慣就好」，安慰得有點敷衍。',hellLabel:'簡單給予鼓勵。',effects:{toxicity:3,tol:-6,g3:2,g1:-2,g2:-2},feedback:''},
-        {label:'具體跟他說他做得好的地方，也點出部門風氣確實不太健康。',effects:{g1:-2,g2:2,tol:10,g3:3},feedback:'阿宏這是第一次，覺得有人真正認真回答了他的問題。',healthy:true}
+        {label:'具體跟他說他做得好的地方，也點出部門風氣確實不太健康。',effects:{g1:2,g2:2,tol:10,g3:3},feedback:'阿宏這是第一次，覺得有人真正認真回答了他的問題。',healthy:true}
       ]},
     {id:'staff_14',npc:'ahong',title:'阿宏被排擠的午餐',scene:['你注意到阿宏最近都自己一個人吃午餐，金姊那掛的人假裝沒看到他經過。'],
       options:[
-        {label:'也跟著假裝沒看到，反正不關自己的事。',hellLabel:'維持原本的用餐安排，不特別介入。',effects:{toxicity:4,g1:4,g3:5,tol:-15,g2:-5},feedback:''},
+        {label:'也跟著假裝沒看到，反正不關自己的事。',hellLabel:'維持原本的用餐安排，不特別介入。',effects:{toxicity:4,g1:-4,g3:5,tol:-15,g2:-5},feedback:''},
         {label:'覺得有點於心不忍，但也沒有真的採取行動。',hellLabel:'注意到狀況，但暫不介入。',effects:{toxicity:5,tol:-8,g3:2,g1:-2,g2:-2},feedback:''},
-        {label:'主動約阿宏一起吃飯，不管金姊那掛怎麼看。',effects:{g1:-3,g2:2,tol:10,g3:3},feedback:'阿宏看起來鬆了一口氣，那是他這個月第一次不是一個人吃飯。',healthy:true}
+        {label:'主動約阿宏一起吃飯，不管金姊那掛怎麼看。',effects:{g1:3,g2:2,tol:10,g3:3},feedback:'阿宏看起來鬆了一口氣，那是他這個月第一次不是一個人吃飯。',healthy:true}
       ]},
     {id:'staff_15',npc:'lin',title:'林襄理的申請案',scene:['林襄理提了一個新的獎勵制度申請，需要部門主管連署支持，金姊私下說「大家都不要簽，看她怎麼辦」。'],
       options:[
-        {label:'跟著不簽，讓提案自然胎死腹中。',hellLabel:'暫不簽署，等待後續評估。',effects:{tol:-18,toxicity:5,g1:5,g3:5,risk:4,g2:-5},feedback:''},
+        {label:'跟著不簽，讓提案自然胎死腹中。',hellLabel:'暫不簽署，等待後續評估。',effects:{tol:-18,toxicity:5,g1:-5,g3:5,risk:4,g2:-5},feedback:''},
         {label:'猶豫了很久，最後還是沒有簽，但心裡有點過意不去。',hellLabel:'審慎考慮後，暫緩簽署。',effects:{toxicity:5,tol:-8,g3:3,g1:-2,g2:-2},feedback:''},
-        {label:'主動簽署支持，即使可能因此被金姊那掛排擠。',effects:{g1:-4,g2:3,tol:12,g3:3},feedback:'林襄理看到你的簽名，很意外，也很感激。',healthy:true}
+        {label:'主動簽署支持，即使可能因此被金姊那掛排擠。',effects:{g1:4,g2:3,tol:12,g3:3},feedback:'林襄理看到你的簽名，很意外，也很感激。',healthy:true}
       ]},
     {id:'staff_16',npc:'lin',title:'林襄理的離職想法',scene:['林襄理私下問你：「如果我真的撐不下去走了，你會覺得可惜嗎？」你不確定該怎麼回答。'],
       options:[
-        {label:'「說實話，換一個可能還比較輕鬆」，說出真心話但很傷人。',hellLabel:'坦言「或許對雙方都是新的開始」。',effects:{tol:-20,toxicity:6,g1:4,g3:5,risk:5,g2:-5},feedback:'',
+        {label:'「說實話，換一個可能還比較輕鬆」，說出真心話但很傷人。',hellLabel:'坦言「或許對雙方都是新的開始」。',effects:{tol:-20,toxicity:6,g1:-4,g3:5,risk:5,g2:-5},feedback:'',
           victim:['我問出這句話，其實是想聽到一點點被需要的感覺。','結果得到的答案，讓我更確定自己在這裡是多餘的。']},
         {label:'「這個我沒辦法幫你決定」，迴避正面回答。',hellLabel:'表示這是個人決定，不便置評。',effects:{toxicity:4,tol:-8,g3:3,g1:-2,g2:-2},feedback:''},
-        {label:'「會，而且我覺得問題不在你，是這裡的文化該改變了」，誠實且肯定她。',effects:{g1:-3,g2:3,tol:12,g3:3},feedback:'林襄理沉默了一下，說謝謝你願意講真話。',healthy:true}
+        {label:'「會，而且我覺得問題不在你，是這裡的文化該改變了」，誠實且肯定她。',effects:{g1:3,g2:3,tol:12,g3:3},feedback:'林襄理沉默了一下，說謝謝你願意講真話。',healthy:true}
+      ]},
+    {id:'staff_hidden',npc:'meimei',title:'小美的沉默',requires:{hellCompleted:true},scene:['茶水間只剩下你和小美兩個人，她欲言又止，最後只說了一句：「其實這幾年，我很多話都沒跟你說。」'],
+      options:[
+        {label:'「有話直說啊，藏著幹嘛」，語氣不耐煩，讓她把話吞回去。',hellLabel:'表示歡迎坦誠溝通，但語氣顯得有些急促。',effects:{g1:-5,g2:-4,g3:-6,toxicity:8,tol:-16},feedback:'',
+          victim:['我鼓起勇氣想說點什麼，結果他一句話，就讓我把話又吞了回去。']},
+        {label:'含糊帶過，換個話題，假裝沒聽到。',hellLabel:'順勢轉移話題，避免尷尬。',effects:{g2:-2,tol:-8,g1:-2,g3:-2},feedback:''},
+        {label:'放下手邊的事，認真問她：「怎麼了？我想聽。」',effects:{g1:3,g2:2,g3:5,safety:6,tol:12},feedback:'小美說了很多，你才發現，原來自己一直沒注意到她的感受。',healthy:true}
       ]}
   ],
   climax:{title:'集體抵制事件爆發',npc:'lin',flagIntro:{excluded_meimei_early:'你想起自己一開始就跟著排擠過小美，如果現在的抵制事件曝光，她大概不會替你說話。'},scene:['金姊發起「這週大家都不要理林襄理的新排班表」，全部門集體已讀不回她的訊息，你也在群組裡。'],
     options:[
-      {label:'你也已讀不回，甚至在私下群組附和抵制。',hellLabel:'這次就「跟著大家的節奏走」，暫時不主動回覆訊息。',effects:{g1:10,tol:-25,risk:8,g2:-5,g3:-5},feedback:'',
+      {label:'你也已讀不回，甚至在私下群組附和抵制。',hellLabel:'這次就「跟著大家的節奏走」，暫時不主動回覆訊息。',effects:{g1:-10,tol:-25,risk:8,g2:-5,g3:-5},feedback:'',
         victim:['訊息已讀十幾個人，一個回覆都沒有。我站在會議室門口十分鐘，沒有人願意進來開會。那一刻，我真的很想離職。']},
       {label:'私下不參與，但公開場合也不表態。',hellLabel:'保持「中立」，不主動回覆也不阻止大家。',effects:{toxicity:6,g3:4,g1:-2,g2:-2},feedback:'',voice:'我知道不是每個人都討厭我，但沒有一個人願意站出來，結果其實是一樣的。'},
-      {label:'主動回覆並進去開會，即使只有你一個人。',effects:{safety:12,tol:15,g1:-8,g2:3,g3:3},feedback:'那場會議只有你一個人到，但林襄理後來說，那是她那個月唯一撐下去的原因。',healthy:true}
+      {label:'主動回覆並進去開會，即使只有你一個人。',effects:{safety:12,tol:15,g1:8,g2:3,g3:3},feedback:'那場會議只有你一個人到，但林襄理後來說，那是她那個月唯一撐下去的原因。',healthy:true}
     ]},
   midReveal:{lines:['最近部門氣氛看起來很融洽，金姊那掛感情很好，你們私下聚餐也越來越熱絡。'],
-    leftLabel:'小圈圈情誼 ↑',leftFromGauge:'g1',leftClass:'good',rightLabel:'部門績效排名',rightCompute:S=>{const r=clamp(Math.round(13-S.g2/9),1,13);return '全公司倒數第'+r+'名';},rightClass:'bad',
+    leftLabel:'小圈圈情誼 ↑',leftFromGauge:'g3',leftClass:'good',rightLabel:'部門績效排名',rightCompute:S=>{const r=clamp(Math.round(13-S.g2/9),1,13);return '全公司倒數第'+r+'名';},rightClass:'bad',
     after:'另一份數據顯示，林襄理提出的三個改善提案全部卡關，已經有兩位同事默默在投履歷。'},
   dilemma:{title:'HR約談你作證',scene:['HR著手調查關於小美與林襄理相關的部門氛圍投訴，約談你了解狀況，問你是否知情部門存在排擠情況。'],
     options:[
-      {label:'「沒有啊，大家感情都很好」，全盤否認。',hellLabel:'回答HR：「大家感情都很好，沒有你說的那種狀況」。',effects:{toxicity:8,risk:6,g1:3,g3:3,g2:-5},feedback:''},
-      {label:'「可能是誤會啦，大家開開玩笑」，輕描淡寫帶過。',hellLabel:'表示：「可能是大家玩笑開得比較大，應該沒有惡意」。',effects:{toxicity:6,g1:2,g2:-2,g3:-2},feedback:''},
-      {label:'如實說出你觀察到的排擠狀況。',effects:{safety:12,g1:-8,g2:3,g3:3},feedback:'金姊後來知道是你說的，那掛的人跟你疏遠了一陣子，但小美和林襄理都謝過你。',healthy:true}
+      {label:'「沒有啊，大家感情都很好」，全盤否認。',hellLabel:'回答HR：「大家感情都很好，沒有你說的那種狀況」。',effects:{toxicity:8,risk:6,g1:-3,g3:3,g2:-5},feedback:''},
+      {label:'「可能是誤會啦，大家開開玩笑」，輕描淡寫帶過。',hellLabel:'表示：「可能是大家玩笑開得比較大，應該沒有惡意」。',effects:{toxicity:6,g1:-2,g2:-2,g3:-2},feedback:''},
+      {label:'如實說出你觀察到的排擠狀況。',effects:{safety:12,g1:8,g2:3,g3:3},feedback:'金姊後來知道是你說的，那掛的人跟你疏遠了一陣子，但小美和林襄理都謝過你。',healthy:true}
     ]},
   testimony:{meimei:{flagOverride:{excluded_meimei_early:'「一開始排擠我的時候，你也在裡面。後來你對我還不錯，但那個開頭，我一直記得。」'},positive:'「我曾經想離職，是因為你願意花時間聽我說話，我才決定再試一次。」',
       staff_01:'「辦公室的耳語開始流動，我還不知道自己已經成為話題中心，直到大家看我的眼神都變了。」',
@@ -812,7 +911,8 @@ chair:{ id:'chair', level:'高階主管', name:'吳董', dept:'集團總部',
   pool:[
     {id:'chair_01',npc:null,title:'高層會議下指示',scene:['集團要衝Q4業績，高層會議上，大家等著你下達方向。'],
       options:[
-        {label:'「我只看結果，方法你們自己想辦法。」',hellLabel:'請各位主管「用最有效率的方式」達成目標，執行細節授權各位判斷。',effects:{g1:12,fear:14,risk:6,g2:-5,g3:-5},feedback:'底下的主管們交換了一個眼神，你知道那代表什麼。',voice:'董事長那句「方法自己想」，翻譯成白話就是：只要有結果，怎麼整人都沒關係。'},
+        {label:'「我只看結果，方法你們自己想辦法。」',hellLabel:'請各位主管「用最有效率的方式」達成目標，執行細節授權各位判斷。',effects:{g1:12,fear:14,risk:6,g2:-5,g3:-5},feedback:'底下的主管們交換了一個眼神，你知道那代表什麼。',
+          victim:['董事長那句「方法自己想」，翻譯成白話就是：只要有結果，怎麼整人都沒關係。','這句話一路往下傳，傳到我們基層的時候，已經沒有人在乎「方法」了。']},
         {label:'模糊帶過，不明確表態。',hellLabel:'這部分「交由各部門因地制宜」，總部不特別介入。',effects:{fear:6,g1:-3,g3:-2,g2:-3},feedback:''},
         {label:'「達標同時，不得違反職安與尊重員工的紅線。」',effects:{safety:10,g3:3,g1:2,g2:3},feedback:'',healthy:true}
       ]},
@@ -825,7 +925,8 @@ chair:{ id:'chair', level:'高階主管', name:'吳董', dept:'集團總部',
       ]},
     {id:'chair_03',npc:'hr',title:'難看的調查報告',scene:['周處長呈上一份全集團「心理安全感」調查，數字很難看。'],
       options:[
-        {label:'要求「修飾」對外公布的數字。',hellLabel:'請公關部「妥善包裝」這份報告的對外呈現方式。',effects:{risk:15,toxicity:8,g1:2,g3:-3,g2:-5},feedback:'',voice:'我把真實的數字呈上去，換來的是「修飾一下」三個字。那一刻我知道，說真話在這裡沒有意義。'},
+        {label:'要求「修飾」對外公布的數字。',hellLabel:'請公關部「妥善包裝」這份報告的對外呈現方式。',effects:{risk:15,toxicity:8,g1:2,g3:-3,g2:-5},feedback:'',
+          victim:['我把真實的數字呈上去，換來的是「修飾一下」三個字。','那一刻我知道，說真話在這裡沒有意義。']},
         {label:'只給董事會內部看，不對外公布也不追蹤。',hellLabel:'這份報告先列為「董事會內部參考資料」即可。',effects:{risk:8,fear:6,g3:-2,g1:3,g2:-3},feedback:'',voice:'報告呈上去之後，就沒有下文了。我猜董事長看過，但也僅止於看過。'},
         {label:'全公司公開並承諾具體追蹤與改善時程。',effects:{safety:12,g3:4,g2:2,g1:2},feedback:'',healthy:true}
       ]},
@@ -915,6 +1016,13 @@ chair:{ id:'chair', level:'高階主管', name:'吳董', dept:'集團總部',
         {label:'「好主意，趕快安排」，用公關操作轉移焦點。',hellLabel:'核准公關規劃，強化正面形象溝通。',effects:{g1:6,g2:-4,toxicity:8,risk:10,tol:-15,g3:-5},feedback:'專訪確實讓輿論降溫了一陣子，但問題本身一個都沒有解決。'},
         {label:'沒有明確拒絕，但也還在猶豫。',hellLabel:'請公關部門先擬案評估。',effects:{toxicity:5,risk:5,tol:-8,g1:-2,g2:-2,g3:-2},feedback:''},
         {label:'「先把問題真正解決，形象自然會恢復」，婉拒這個提議。',effects:{g3:4,safety:6,risk:-6,tol:10,g1:2,g2:3},feedback:'這個決定沒有立刻換來好新聞，但半年後，員工信任度調查數字真的回升了。',healthy:true}
+      ]},
+    {id:'chair_hidden',npc:'victim',title:'尾大不掉的王協理',requires:{hellCompleted:true},scene:['王協理如今在集團裡呼風喚雨，甚至開始不太把你的指示當一回事，私下放話「沒有我，這個部門業績馬上垮」。','底下的員工都在說，真正管事的人早就不是你，而是王協理。'],
+      options:[
+        {label:'繼續睜一隻眼閉一隻眼，讓他坐大，反正業績還撐得住。',hellLabel:'考量整體業績表現，暫不調整王協理的職務授權。',effects:{g1:8,g2:5,g3:-8,toxicity:10,risk:12,tol:-20},feedback:'',
+          victim:['他心情不好，我們整組人就要多加班一個禮拜。','董事長好像也管不動他了，我們還能指望誰？']},
+        {label:'私下敲打他兩句，但沒有真正收回他手上的權限。',hellLabel:'私下進行提醒，暫不調整職務授權範圍。',effects:{toxicity:6,risk:6,tol:-8,g1:-2,g2:-2,g3:-2},feedback:''},
+        {label:'正式收回他部分職權，重新拉回你對這個部門的掌控。',effects:{g1:3,g2:-2,g3:4,safety:6,risk:-6,tol:10},feedback:'這個決定得罪了王協理，但部門裡終於有人敢直接跟你反映問題了。',healthy:true}
       ]}
   ],
   climax:{title:'集體離職潮',npc:'victim',flagIntro:{promoted_wang_blindly:'你想起當初不顧申訴紀錄就升了王協理，這次的集體離職潮，某種程度上是你自己種下的因。'},scene:['王協理的部門一口氣有六個人同時提離職，理由都寫「個人生涯規劃」，但你知道真正的原因。'],
@@ -1034,6 +1142,12 @@ target:{ id:'target', level:'被霸凌者', name:'小雨', dept:'行銷部',
         {label:'關掉信件，告訴自己「這種小事不用麻煩專業的人」。',effects:{g1:-6,toxicity:4},feedback:''},
         {label:'收藏起來，但一直沒有真的預約。',effects:{g1:-2},feedback:''},
         {label:'點進去，預約了第一次的免費諮商時段。',effects:{g1:6,g3:2},feedback:'你還不知道這會不會有用，但這是你這半年第一次為自己做的決定。',healthy:true}
+      ]},
+    {id:'target_hidden',npc:'ally',title:'小魚也開始保持距離',requires:{hellCompleted:true},scene:['你發現小魚最近開始跟邱經理那群人一起吃午餐，你傳訊息給她，已讀的時間變得很慢，回覆也越來越簡短。'],
+      options:[
+        {label:'開始討好邱經理那群人，希望能重新被接納。',effects:{g1:-8,g2:-4,g3:-6,toxicity:6,tol:-15},feedback:'你陪著笑了一整個下午，回到家卻覺得更累了。',voice:'（心裡）我到底在討好誰，為了什麼？'},
+        {label:'什麼都不說，默默接受自己好像被排除在外了。',effects:{g1:-6,g2:-2,g3:-4,tol:-10},feedback:'你開始習慣一個人吃午餐。'},
+        {label:'找一個非工作圈的朋友聊聊，把這段時間的委屈說出來。',effects:{g1:6,g2:2,g3:5,safety:6,tol:8},feedback:'講出來之後，你發現自己並沒有想像中那麼孤單。',healthy:true}
       ]}
   ],
   climax:{title:'大會上的公開羞辱',npc:'boss',flagIntro:{kept_evidence:'你想起口袋裡那份記錄了半年的文件，至少這一次，你不是空手而來。'},scene:['部門季度大會，全公司的人都在，邱經理突然點名你：「這一季業績最差的就是這個部門，尤其是某些人，貢獻幾乎是零。」','所有人的視線都轉向你。'],
@@ -1212,6 +1326,13 @@ migrant:{ id:'migrant', level:'外籍移工', name:'阿迪', dept:'資源分類�
           voice:'（小凱心裡）我聽不懂他們在說什麼，但那種眼神跟笑聲，我知道不是什麼好話。我開始越來越不想上班。'},
         {label:'沒有加入，但聽到了也沒有制止，假裝沒注意到。',hellLabel:'不參與，維持中立。',effects:{toxicity:4,tol:-8,g2:-2},feedback:''},
         {label:'「他聽不懂又不代表可以這樣說他」，當面請大家用中文，或別再這樣說。',effects:{g1:3,g3:5,safety:5,tol:10},feedback:'氣氛尷尬了一下，但之後大家講話真的比較收斂了。',healthy:true}
+      ]},
+    {id:'mig_hidden',npc:'kai',title:'小凱真的要走了',requires:{hellCompleted:true},scene:['小凱正式跟廠方提出離職申請，你們同鄉私下在討論，要不要在他最後這幾天，再「教訓」他一次。'],
+      options:[
+        {label:'跟著提議，趁小凱還沒走，最後再讓他難堪一次。',hellLabel:'趁著交接期間，讓大家更確實地驗收工作，確保交接沒有疏漏。',effects:{g1:6,g2:-4,g3:6,toxicity:8,risk:6,tol:-18},feedback:'',
+          victim:['我最後幾天的班表，被排得特別難做，工具也一樣常常不見。我只想快點離開這裡。']},
+        {label:'沒有加入，但也沒有阻止大家的計畫。',hellLabel:'不參與交接安排的討論，保持觀望。',effects:{g1:-2,g2:-2,g3:-2,tol:-8},feedback:''},
+        {label:'在小凱走之前，主動跟他道歉，並勸大家別再為難他。',effects:{g1:3,g2:2,g3:4,safety:5,tol:10},feedback:'小凱很意外，離開前跟你說了聲謝謝。',healthy:true}
       ]}
   ],
   climax:{title:'集體施壓事件',npc:'kai',flagIntro:{migrant_framed_lin:'你想起自己曾經聯合大家想搞垮林班長，現在看著小凱的處境，心裡有點五味雜陳。'},scene:['同鄉們決定「教訓」小凱一頓——藏起他常用的工具、集體已讀不回他的求助訊息，你注意到小凱這幾天看起來很沮喪，開始說要離職。','林班長夾在中間，似乎也不知道該怎麼處理這條線上的氣氛。'],
@@ -1284,14 +1405,15 @@ hrstaff:{ id:'hrstaff', level:'人資／申訴受理', name:'曾組長', dept:'�
       ]},
     {id:'hr_02',npc:'petitioner',title:'申訴案的冷處理',scene:['小葳的案子受理滿一個月了，她私下來問進度，你其實根本還沒開始查。'],
       options:[
-        {label:'「案子很多，你的還在排隊，急也沒有用」，語氣有點不耐煩。',hellLabel:'表示案件量大，需要依序處理。',effects:{g1:5,g2:4,g3:-6,tol:-16},feedback:''},
+        {label:'「案子很多，你的還在排隊，急也沒有用」，語氣有點不耐煩。',hellLabel:'表示案件量大，需要依序處理。',effects:{g1:5,g2:4,g3:-6,tol:-16},feedback:'',
+          victim:['我只是想知道案子進度到哪了，得到的答案卻是「排隊，急也沒用」。','那之後我再也不敢主動去問，只能自己每天胡思亂想。']},
         {label:'隨口說「快了快了」，但其實完全沒有動作。',hellLabel:'表示會盡快安排進度。',effects:{g2:2,tol:-8,g3:-3},feedback:''},
         {label:'誠實告知目前進度確實落後，並承諾具體的處理時間。',effects:{g3:4,safety:4,g2:-2,tol:8},feedback:'小葳雖然失望，但至少知道自己沒有被遺忘。',healthy:true}
       ]},
     {id:'hr_03',npc:'petitioner',title:'案子的證據不足',scene:['小葳的申訴案調查後，證據確實比較薄弱，很難認定，你要怎麼跟她說明結果。'],
       options:[
         {label:'「就說了證據不足，這種事本來就很難查，你不要太計較」，語帶敷衍與嘲諷。',hellLabel:'依調查結果告知證據不足，建議理性看待。',effects:{g1:5,g2:3,g3:-6,tol:-18,risk:6},feedback:'',
-          voice:'（小葳心裡）我知道證據不足，但那種說話的語氣，好像在笑我小題大作，讓我覺得更難堪。'},
+          victim:['我知道證據不足，但那種說話的語氣，好像在笑我小題大作。','讓我覺得，比起被欺負，被這樣說更難堪。']},
         {label:'用制式的公文用語回覆「查無實據」，沒有多做說明。',hellLabel:'以正式公文回覆調查結果。',effects:{g2:2,tol:-8,g3:-3},feedback:''},
         {label:'耐心說明調查過程與限制，並告訴她未來如果再發生，隨時可以再反映。',effects:{g3:4,safety:5,g1:-2,tol:8},feedback:'小葳雖然難過，但至少感受到你有認真查過，而不是隨便打發。',healthy:true}
       ]},
@@ -1304,7 +1426,8 @@ hrstaff:{ id:'hrstaff', level:'人資／申訴受理', name:'曾組長', dept:'�
       ]},
     {id:'hr_05',npc:'petitioner',title:'情緒勒索式的關心',scene:['另一位同仁想申訴，你聽完後說：「你確定要這樣做嗎？以後在公司大家都會知道，你要想清楚。」'],
       options:[
-        {label:'持續用這種方式暗示她「不要沒事找事」，讓她自己打退堂鼓。',hellLabel:'提醒她審慎評估後續影響。',effects:{g1:6,g2:3,g3:-7,tol:-18,risk:6},feedback:''},
+        {label:'持續用這種方式暗示她「不要沒事找事」，讓她自己打退堂鼓。',hellLabel:'提醒她審慎評估後續影響。',effects:{g1:6,g2:3,g3:-7,tol:-18,risk:6},feedback:'',
+          victim:['我鼓起勇氣想反映，換來的卻是一句「你確定嗎？大家都會知道」。','後來我沒有再提這件事，只是不知道還要忍多久。']},
         {label:'說完那句話後就沒再多說，但話已經造成了效果。',hellLabel:'依程序告知後續可能情形。',effects:{g2:2,tol:-8,g3:-3},feedback:''},
         {label:'「不管你決定怎麼做，我都會保密處理，你不用有壓力」，收回那句話並道歉。',effects:{g3:4,safety:5,tol:8},feedback:'她後來還是決定申訴，你也確實做到了保密處理。',healthy:true}
       ]},
@@ -1388,6 +1511,13 @@ hrstaff:{ id:'hrstaff', level:'人資／申訴受理', name:'曾組長', dept:'�
         {label:'開始把複雜的案子也草率結案，只為了衝快速結案的數字。',hellLabel:'優化結案流程，提升處理效率。',effects:{g1:5,g2:6,g3:-7,risk:8,toxicity:5,tol:-14},feedback:'數字確實變好看了，但幾起原本該深入調查的案子，都被草草結束。'},
         {label:'維持原本的步調，數字不好看也沒有特別調整做法。',hellLabel:'維持現行處理步調。',effects:{g2:-2,toxicity:3,tol:-5,g1:-2,g3:-2},feedback:''},
         {label:'向上級說明「結案天數」不該是唯一指標，爭取加入「處理品質」的評估。',effects:{g3:4,safety:5,g1:-2,tol:8},feedback:'上級後來同意調整KPI設計，申訴品質也逐漸受到重視。',healthy:true}
+      ]},
+    {id:'hrstaff_hidden',npc:'colleague',title:'阿政的離職準備',requires:{hellCompleted:true},scene:['你無意間看到阿政的手機畫面上開著人力銀行的履歷編輯頁，他發現你看到了，尷尬地把手機收起來。'],
+      options:[
+        {label:'裝作沒看到，但之後找機會把他考核打得更難看，「反正他要走了」。',hellLabel:'考量他近期可能異動，在考核上更嚴格檢視他的表現。',effects:{g1:8,g2:-4,g3:-7,toxicity:8,risk:6,tol:-18},feedback:'',
+          victim:['我原本只是投石問路看看機會，結果那次考核，主管把我打得比誰都難看。']},
+        {label:'假裝什麼都沒看到，也沒多問。',hellLabel:'尊重同仁的個人隱私，不做進一步詢問。',effects:{g1:-2,g2:-2,g3:-2,tol:-8},feedback:''},
+        {label:'私下找阿政聊聊，問他是不是工作上遇到什麼困難，並認真聽他說。',effects:{g1:3,g2:2,g3:5,safety:6,tol:10},feedback:'阿政愣了一下，最後把心裡憋了很久的委屈說了出來。',healthy:true}
       ]}
   ],
   climax:{title:'全公司都在看的案子',npc:'petitioner',flagIntro:{took_favor:'你想起自己曾經因為一頓飯，就把案子處理得比較輕，現在面對這起更大的案子，你不確定自己還能不能堅持原則。'},scene:['一起牽涉到公司副總的申訴案曝光，董事會私下要求你「盡快讓這件事平息」，而申訴人小葳也正等著看，人資到底站在哪一邊。'],
@@ -1439,20 +1569,40 @@ hrstaff:{ id:'hrstaff', level:'人資／申訴受理', name:'曾組長', dept:'�
 }
 };
 const PERSONA_ORDER = ['yeh','hsu','staff','chair','migrant','hrstaff','target'];
+const PERSONA_PORTRAIT = {
+  yeh:'assets/characters/paper-collage/yeh.webp',
+  hsu:'assets/characters/paper-collage/hsu.webp',
+  staff:'assets/characters/paper-collage/staff.webp',
+  chair:'assets/characters/paper-collage/chair.webp',
+  migrant:'assets/characters/paper-collage/migrant.webp',
+  hrstaff:'assets/characters/paper-collage/hrstaff.webp',
+  target:'assets/characters/paper-collage/target.webp'
+};
 const RESERVED_PERSONAS = [];
-const ORIGIN_PERSONAS = ['yeh','hsu','staff','chair'];
-const STAGE2_PERSONAS = ['yeh','hsu','staff','chair','migrant','hrstaff'];
+const NPC_PORTRAIT = {
+  'yeh:ahong': 'assets/samples/paper-collage-v1/npc_ahong.webp'
+};
+function npcIconHtml(pid, npcKey, emojiFallback, size){
+  const src = NPC_PORTRAIT[pid+':'+npcKey];
+  size = size || 22;
+  return src ? `<img src="${src}" alt="" style="height:${size}px;width:auto;vertical-align:-6px;margin-right:2px;">` : (emojiFallback||'');
+}
+function bannerHtml(ev){
+  return ev.banner ? `<img class="event-banner" src="${ev.banner}" alt="">` : '';
+}
 function personaQualified(pid){ const m=personaMeta(pid); return (m.runsNormal||0)>=1 && (m.runsHell||0)>=1; }
+function personaHellCleared(pid){ const m=personaMeta(pid); return (m.runsHell||0)>=1; }
+function hellClearedCount(){ return PERSONA_ORDER.filter(personaHellCleared).length; }
+const UNLOCK_HELL_THRESHOLD = {migrant:2, hrstaff:3, target:4};
 function personaUnlocked(pid){
-  if(pid==='migrant'||pid==='hrstaff') return ORIGIN_PERSONAS.every(personaQualified);
-  if(pid==='target') return STAGE2_PERSONAS.every(personaQualified);
-  return true;
+  const need = UNLOCK_HELL_THRESHOLD[pid];
+  if(need===undefined) return true;
+  return hellClearedCount()>=need;
 }
 function unlockProgressText(pid){
-  const need = (pid==='target') ? STAGE2_PERSONAS : ORIGIN_PERSONAS;
-  const done = need.filter(personaQualified).length;
-  const label = (pid==='target') ? '前6名角色' : 'origin 4名角色';
-  return `🔒 ${label}皆需完成「基本模式1輪＋地獄模式1輪」才會開放（目前 ${done}/${need.length}）`;
+  const need = UNLOCK_HELL_THRESHOLD[pid];
+  const done = hellClearedCount();
+  return `🔒 任 ${need} 名角色完成過地獄模式才會開放（目前 ${done}/${need}）`;
 }
 
 /* =========================================================
@@ -1461,7 +1611,7 @@ function unlockProgressText(pid){
 let S = null;
 function freshState(persona,hell){
   const tol={}; persona.npcs.forEach(n=>tol[n.key]=100);
-  const st = {persona,hell:!!hell,fear:0,toxicity:0,risk:0,safety:70,tol,history:[],step:0,dilemmaChoice:null,seq:null,quizMark:0,flags:new Set()};
+  const st = {persona,hell:!!hell,fear:0,toxicity:0,risk:0,safety:70,tol,history:[],step:0,dilemmaChoice:null,seq:null,quizMark:0,flags:new Set(),brokenNpcs:new Set(),streakTier:null,streakLen:0,streakFired:false,noBreakRun:true,modifier:null,hiddenDeltaSum:{},blindRevealed:false};
   persona.gauges.forEach(g=>st[g.key]=g.start);
   return st;
 }
@@ -1478,6 +1628,47 @@ function effectiveEffects(personaId, sourceId, optIndex, baseEffects){
 }
 function personaMeta(pid){ if(!META[pid]) META[pid]={runsCompleted:0,endings:[],titles:[],runsNormal:0,runsHell:0}; if(META[pid].runsNormal===undefined) META[pid].runsNormal=0; if(META[pid].runsHell===undefined) META[pid].runsHell=0; return META[pid]; }
 
+const ACHIEVEMENTS = [
+  {id:'all_started', name:'全員到齊', hint:'把每一位角色都帶上場過一次。', desc:'七位角色都至少完成過一輪基本模式。', check:()=>PERSONA_ORDER.every(pid=>{const m=META[pid];return m&&m.runsCompleted>=1;})},
+  {id:'all_hell', name:'地獄使者', hint:'在每一位角色身上，都試過更狠的那一套。', desc:'七位角色都至少完成過一輪地獄模式。', check:()=>PERSONA_ORDER.every(pid=>{const m=META[pid];return m&&m.runsHell>=1;})},
+  {id:'darkest_ending', name:'深淵漫遊', hint:'有些結局，黑得很徹底。', desc:'任一角色拿到過最黑暗的結局。', check:()=>PERSONA_ORDER.some(pid=>{const m=META[pid];return m&&m.endings.includes('A');})},
+  {id:'best_ending', name:'善終之人', hint:'偶爾，也讓一段故事好好收尾。', desc:'任一角色拿到過最理想的結局。', check:()=>PERSONA_ORDER.some(pid=>{const m=META[pid];return m&&m.endings.includes('G');})},
+  {id:'title_collector', name:'稱號收藏家', hint:'你的稱號牆，已經有點分量了。', desc:'跨角色累積收集 10 個稱號。', check:()=>PERSONA_ORDER.reduce((a,pid)=>a+((META[pid]&&META[pid].titles.length)||0),0)>=10},
+  {id:'full_gallery', name:'結局大滿貫', hint:'把一個人的所有可能，都走過一遍。', desc:'任一角色收集滿該角色的全部結局。', check:()=>PERSONA_ORDER.some(pid=>{const m=META[pid];const p=PERSONAS[pid];return m&&p&&m.endings.length>=p.endings.length;})},
+  {id:'no_breakpoint', name:'不動如山', hint:'這一輪，沒有人被你逼到牆角。', desc:'單輪遊玩中，沒有把任何一位角色的容忍度逼到底線。', check:(runState)=>!!(runState&&runState.noBreakRun&&runState.history.length>0)},
+  {id:'streak_harsh', name:'連環爆走', hint:'手感正順的時候，很難停下來。', desc:'單輪遊玩中，連續三次選擇最強硬的處理方式。', check:(runState)=>!!(runState&&runState.flags.has('streak_harsh'))},
+  {id:'streak_healthy', name:'浪子回頭', hint:'難得，你連續軟了下來。', desc:'單輪遊玩中，連續三次選擇最溫和的處理方式。', check:(runState)=>!!(runState&&runState.flags.has('streak_healthy'))},
+  {id:'easter_egg', name:'彩蛋獵人', hint:'有些事，只有走到最後才會被看見。', desc:'觸發過隱藏情境（提示：試試地獄模式）。', check:(runState)=>!!(runState&&runState.history.some(h=>h.id&&h.id.endsWith('_hidden')))}
+];
+function loadAchievements(){ try{ const raw=localStorage.getItem('bkw_achievements_v1'); if(raw) return JSON.parse(raw);}catch(e){} return {}; }
+function saveAchievements(a){ try{ localStorage.setItem('bkw_achievements_v1', JSON.stringify(a)); }catch(e){} }
+let ACH_UNLOCKED = loadAchievements();
+function checkAchievements(runState){
+  const newly = [];
+  ACHIEVEMENTS.forEach(a=>{
+    if(!ACH_UNLOCKED[a.id] && a.check(runState)){
+      ACH_UNLOCKED[a.id] = new Date().toISOString().slice(0,10);
+      newly.push(a);
+    }
+  });
+  if(newly.length) saveAchievements(ACH_UNLOCKED);
+  return newly;
+}
+
+const RUN_MODIFIERS = [
+  {id:'double_dice', name:'雙重命運骰', desc:'觸發被害者視角的命運骰，這輪會擲兩次，兩次的倍率直接相乘，效果會更加顯著。'},
+  {id:'thin_skin', name:'玻璃心全開', desc:'這輪所有 NPC 的初始容忍度只有 50，臨界點更容易被踩到。', apply:(st)=>{ Object.keys(st.tol).forEach(k=>st.tol[k]=50); }},
+  {id:'slippery_slope', name:'如履薄冰', desc:'這輪的隱藏數值（恐懼／毒性／風險）變動幅度再放大 1.3 倍。'},
+  {id:'hair_trigger', name:'一觸即發', desc:'這輪的「連續選擇」偵測，門檻降為連續兩次就會觸發。'},
+  {id:'no_mercy', name:'零容忍', desc:'這輪所有「健康」選項帶來的正面效果打八折，變好沒有這麼容易。'},
+  {id:'targeted', name:'眾矢之的', desc:'開局隨機挑一位角色身邊的關係人，容忍度直接砍到 30，這段關係從一開始就特別脆弱。', apply:(st)=>{
+    const keys = Object.keys(st.tol);
+    if(keys.length){ const k = keys[Math.floor(Math.random()*keys.length)]; st.tol[k] = 30; }
+  }},
+  {id:'blind_numbers', name:'心裡有數', desc:'這輪選完選項後，三圍變化的數字會先保密，直到反差時刻才會一次總結揭曉。'}
+];
+function pickRunModifier(){ return RUN_MODIFIERS[Math.floor(Math.random()*RUN_MODIFIERS.length)]; }
+
 function applyEffects(effects, npcKey){
   const dice = 0.8 + Math.random()*0.5;
   const visibleDeltas = {};
@@ -1490,7 +1681,7 @@ function applyEffects(effects, npcKey){
       if(applied!==0) visibleDeltas[k] = (visibleDeltas[k]||0)+applied;
     }
     else if(k==='tol'){ if(npcKey){ const varied=Math.round(v*dice); S.tol[npcKey]=clamp(S.tol[npcKey]+varied,0,100);} }
-    else { const varied = Math.round(v*dice*(S.hell?1.2:1)); S[k] = clamp(S[k] + varied, 0, 200); }
+    else { const slope = (S.modifier && S.modifier.id==='slippery_slope') ? 1.3 : 1; const varied = Math.round(v*dice*(S.hell?1.2:1)*slope); S[k] = clamp(S[k] + varied, 0, 200); }
   });
   return visibleDeltas;
 }
@@ -1549,11 +1740,13 @@ function setTopbar(persona){
     document.getElementById('gf-'+g.key).style.width = g.start+'%';
   });
 }
-function updateGauges(visibleDeltas){
+function updateGauges(visibleDeltas, blind){
   S.persona.gauges.forEach(g=>{
-    document.getElementById('gv-'+g.key).textContent = Math.round(S[g.key]);
-    document.getElementById('gf-'+g.key).style.width = clamp(S[g.key],0,100)+'%';
-    const d = visibleDeltas ? visibleDeltas[g.key] : undefined;
+    if(!blind){
+      document.getElementById('gv-'+g.key).textContent = Math.round(S[g.key]);
+      document.getElementById('gf-'+g.key).style.width = clamp(S[g.key],0,100)+'%';
+    }
+    const d = (visibleDeltas && !blind) ? visibleDeltas[g.key] : undefined;
     if(d){
       const gaugeEl = document.getElementById('gauge-'+g.key);
       const badge = document.getElementById('gd-'+g.key);
@@ -1568,15 +1761,39 @@ function updateGauges(visibleDeltas){
   });
 }
 function setReckoning(on){ document.body.classList.toggle('reckoning', !!on); }
-function showVictim(lines, cont, diceHtml){
+function openLightbox(src){
+  document.getElementById('portrait-lightbox-img').src = src;
+  document.getElementById('portrait-lightbox').style.display = 'flex';
+}
+window.openLightbox = openLightbox;
+function closeLightbox(){ document.getElementById('portrait-lightbox').style.display = 'none'; }
+window.closeLightbox = closeLightbox;
+
+function showVictimWithDice(lines, doubleDice, cont){
   setReckoning(true);
   const ov = document.getElementById('victim-overlay');
   ov.style.display='flex';
   ov.innerHTML = `<div class="victim-box"><div class="vtag">◆ 被害者視角 · 系統強制播放</div>
     ${lines.map(l=>`<p>${l}</p>`).join('')}
-    ${diceHtml || ''}
-    <div class="vcont"><button class="btn-primary" id="victim-cont">繼續</button></div></div>`;
-  document.getElementById('victim-cont').onclick = ()=>{ ov.style.display='none'; setReckoning(false); cont(); };
+    <div class="vcont" id="vDiceArea"><button class="btn-primary" id="victim-dice-btn">🎲 擲下命運骰</button></div></div>`;
+  document.getElementById('victim-dice-btn').onclick = ()=>{
+    const roll1 = 1+Math.floor(Math.random()*6);
+    let rollLabel, mult, multLabel, diceHtml;
+    if(doubleDice){
+      const roll2 = 1+Math.floor(Math.random()*6);
+      mult = CLIMAX_DICE_MULT[roll1] * CLIMAX_DICE_MULT[roll2];
+      rollLabel = `${roll1}、${roll2}`;
+      multLabel = mult.toFixed(2);
+      diceHtml = `🎲 雙重命運骰：擲出 <b>${roll1}</b> 與 <b>${roll2}</b> → 兩次倍率相乘 → 效果 ×${multLabel}`;
+    } else {
+      mult = CLIMAX_DICE_MULT[roll1];
+      rollLabel = `${roll1}`;
+      multLabel = mult.toFixed(1);
+      diceHtml = `🎲 命運骰：擲出 <b>${roll1}</b> → 效果 ×${multLabel}（不確定性加成）`;
+    }
+    document.getElementById('vDiceArea').innerHTML = `<div class="dice-line" style="margin-bottom:14px;opacity:1;animation:none;">${diceHtml}</div><button class="btn-primary" id="victim-cont">繼續</button>`;
+    document.getElementById('victim-cont').onclick = ()=>{ ov.style.display='none'; setReckoning(false); cont(rollLabel, mult, multLabel); };
+  };
 }
 
 /* =========================================================
@@ -1595,6 +1812,10 @@ function goHome(){
       <button class="btn-ghost" onclick="showChangelog()">查看版本紀錄</button>
       <button class="btn-primary" onclick="goPersonaSelect()">選擇角色</button>
     </div>
+    <div class="continue-row" style="justify-content:flex-start;gap:8px;">
+      <button class="btn-ghost" onclick="goAchievements()">🏆 成就牆</button>
+      ${allPersonasQualified()? `<button class="btn-ghost" style="border-color:var(--gold);color:var(--gold);" onclick="renderFinale()">◆ 總體檢討（全員通關彩蛋）</button>` : ''}
+    </div>
     <div style="margin-top:10px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
       <button class="btn-ghost" id="devLockBtn" style="font-size:11.5px;padding:5px 10px;color:var(--ink-dim);opacity:.45;border-style:dashed;cursor:not-allowed;" onclick="devSecretClick()">🔒 開發者模式（僅限內部人員）</button>
       <button class="btn-ghost" style="font-size:11.5px;padding:5px 10px;color:var(--ink-dim);border-style:dashed;" onclick="resetProgress()">🗑 清除遊戲紀錄（結局圖鑑／稱號牆／地獄模式解鎖）</button>
@@ -1603,9 +1824,11 @@ function goHome(){
 }
 window.goHome = goHome;
 function resetProgress(){
-  if(!confirm('確定要清除這台裝置上《霸凌王》的所有紀錄嗎？\n\n包含四個角色各自的結局圖鑑、稱號牆、累計輪數、地獄模式解鎖狀態，此動作無法復原，且只會影響這台瀏覽器，不會動到其他人的紀錄。')) return;
+  if(!confirm('確定要清除這台裝置上《霸凌王》的所有紀錄嗎？\n\n包含各角色的結局圖鑑、稱號牆、累計輪數、地獄模式解鎖狀態、成就牆進度，此動作無法復原，且只會影響這台瀏覽器，不會動到其他人的紀錄。')) return;
   try{ localStorage.removeItem('bkw_meta_v2'); }catch(e){}
+  try{ localStorage.removeItem('bkw_achievements_v1'); }catch(e){}
   META = {};
+  ACH_UNLOCKED = {};
   goHome();
 }
 window.resetProgress = resetProgress;
@@ -1619,32 +1842,143 @@ function devSecretClick(){
 }
 window.devSecretClick = devSecretClick;
 
-function goDevMode(){
-  clearLog(); setGaugesVisible(false); chapterTag.textContent='開發者模式';
+function goAchievements(tab){
+  tab = tab || 'ach';
+  clearLog(); setGaugesVisible(false); chapterTag.textContent='成就牆';
+  const tabBtn = (key,label)=>`<button class="btn-ghost" style="${tab===key?'border-color:var(--gold);color:var(--gold);':''}" onclick="goAchievements('${key}')">${label}</button>`;
+  let body = '';
+  if(tab==='titles'){
+    const totalTitles = PERSONA_ORDER.reduce((a,pid)=>a+((META[pid]&&META[pid].titles.length)||0),0);
+    const groups = PERSONA_ORDER.map(pid=>{
+      const p = PERSONAS[pid]; const m = personaMeta(pid);
+      if(!m.titles.length) return '';
+      return `<div style="margin-bottom:16px;">
+        <p class="eyebrow" style="margin-bottom:6px;">${p.name}（${p.level}）</p>
+        <div class="titlewall">${m.titles.map(t=>`<span class="tchip">${t}</span>`).join('')}</div>
+      </div>`;
+    }).join('');
+    body = `
+      <h2 class="scene-title">累積收集 ${totalTitles} 個稱號</h2>
+      ${groups || '<p class="scene-body" style="color:var(--ink-dim);">還沒有收集到任何稱號，完成一輪遊玩後就會出現在這裡。</p>'}
+    `;
+  } else {
+    const unlockedCount = ACHIEVEMENTS.filter(a=>ACH_UNLOCKED[a.id]).length;
+    const rows = ACHIEVEMENTS.map(a=>{
+      const got = ACH_UNLOCKED[a.id];
+      return `<div class="tier-card" style="cursor:default;${got?'':'opacity:.5;'}">
+        <div class="tname" style="font-size:16px;">${got?'🏆':'🔒'} ${a.name}</div>
+        <div class="tblurb">${a.hint || a.desc}</div>
+        ${got? `<div class="troster">達成於 ${got}</div>` : ''}
+      </div>`;
+    }).join('');
+    body = `
+      <h2 class="scene-title">已解鎖 ${unlockedCount} / ${ACHIEVEMENTS.length}</h2>
+      <div class="tier-grid">${rows}</div>
+    `;
+  }
   appendCard(`
-    <p class="eyebrow">🛠 開發者模式</p>
-    <h2 class="scene-title">數值調整台</h2>
-    <p class="scene-body" style="color:var(--ink-dim);">直接檢視、覆寫每個角色、每個情境、每個選項的三圍與隱藏數值加減。覆寫值只存在這台瀏覽器（localStorage），不會動到原始劇本設定，可隨時個別重置或全部重置。</p>
-    <div class="tier-grid">
-      ${PERSONA_ORDER.map(pid=>{
-        const p=PERSONAS[pid];
-        const ovCount = OVERRIDES[pid] ? Object.keys(OVERRIDES[pid]).length : 0;
-        return `<button class="tier-card" onclick="devPersonaScreen('${pid}')">
-          <div class="tlevel">${p.level}</div>
-          <div class="tname">${p.name}</div>
-          <div class="tdept">${p.dept}</div>
-          ${ovCount? `<div class="troster">已覆寫 ${ovCount} 個情境</div>`:''}
-        </button>`;
-      }).join('')}
+    <p class="eyebrow">🏆 成就牆</p>
+    <div class="continue-row" style="justify-content:flex-start;gap:8px;margin-top:0;margin-bottom:16px;">
+      ${tabBtn('ach','成就')}
+      ${tabBtn('titles','稱號')}
     </div>
-    <div class="continue-row" style="justify-content:space-between;flex-wrap:wrap;gap:8px;">
-      <button class="btn-ghost" onclick="goHome()">返回主畫面</button>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    ${body}
+    <div class="continue-row"><button class="btn-ghost" onclick="goHome()">返回主畫面</button></div>
+  `);
+}
+window.goAchievements = goAchievements;
+
+function allPersonasQualified(){ return PERSONA_ORDER.every(personaQualified); }
+function renderFinale(){
+  clearLog(); setGaugesVisible(false); chapterTag.textContent='總體檢討';
+  const rows = PERSONA_ORDER.map(pid=>{
+    const p = PERSONAS[pid]; const m = personaMeta(pid);
+    const lastEndId = m.endings[m.endings.length-1];
+    const ending = p.endings.find(e=>e.id===lastEndId);
+    return `<div class="tier-card" style="cursor:default;">
+      <div class="tlevel">${p.level}</div>
+      <div class="tname">${p.name}</div>
+      <div class="tblurb">最近一次結局：${ending? ending.name : '尚未紀錄'}</div>
+      <div class="troster">累計 ${m.runsCompleted} 輪（基本 ${m.runsNormal||0}／地獄 ${m.runsHell||0}）</div>
+    </div>`;
+  }).join('');
+  appendCard(`
+    <p class="eyebrow">◆ 七個角色，七種立場</p>
+    <h2 class="scene-title">總體檢討</h2>
+    <p class="scene-body">你已經走過七個角色的立場：主管對員工、員工對主管、同事對同事、集團高層、被霸凌者本人、語言隔閡下的移工，以及本該是最後防線的人資。</p>
+    <p class="scene-body" style="color:var(--ink-dim);">每一次「這樣做比較有效率」「大家都這樣」「他應該只是比較敏感」的念頭，都是霸凌得以延續的理由。這套教材用反差的方式，讓你先當一次加害者，再回頭看看被害者的樣子——如果你在任何一段故事裡，認出了自己曾經說過的話，那正是這套訓練教材真正想讓你帶走的東西。</p>
+    <div class="tier-grid">${rows}</div>
+    <div class="feedback-box">依職業安全衛生法第6條第2項第3款，雇主對於執行職務因他人行為遭受身體或精神不法侵害，應採取預防必要措施。歡迎將本教材用於部門教育訓練，並搭配公司實際的申訴管道與職安通報窗口一起說明。</div>
+    <div class="continue-row"><button class="btn-ghost" onclick="goHome()">返回主畫面</button></div>
+  `);
+}
+window.renderFinale = renderFinale;
+
+function goDevMode(tab){
+  tab = tab || 'values';
+  clearLog(); setGaugesVisible(false); chapterTag.textContent='開發者模式';
+  const tabBtn = (key,label)=>`<button class="btn-ghost" style="${tab===key?'border-color:var(--gold);color:var(--gold);':''}" onclick="goDevMode('${key}')">${label}</button>`;
+  let body = '';
+  if(tab==='reference'){
+    const achRows = ACHIEVEMENTS.map(a=>`<div class="tier-card" style="cursor:default;">
+      <div class="tname" style="font-size:15px;">${a.name}</div>
+      <div class="tblurb">${a.desc}</div>
+      <div class="troster">成就牆顯示的模糊提示：「${a.hint||a.desc}」</div>
+    </div>`).join('');
+    const titleSections = PERSONA_ORDER.map(pid=>{
+      const p = PERSONAS[pid];
+      const rows = Object.keys(p.personalityMap).map(key=>{
+        const t = p.personalityMap[key];
+        const cond = (key==='growthHigh') ? '本輪沒有任何不當選擇，且健康選項次數達 5 次以上'
+          : (key==='growthLow') ? '本輪沒有任何不當選擇，但健康選項次數不到 5 次'
+          : `本輪對「${(p.npcs.find(n=>n.key===key)||{}).name || key}」做出最多次不當選擇（次數並列時取先出現者）`;
+        return `<div class="tier-card" style="cursor:default;">
+          <div class="tname" style="font-size:15px;">${t.name}</div>
+          <div class="tblurb">${t.desc}</div>
+          <div class="troster">判定條件：${cond}</div>
+        </div>`;
+      }).join('');
+      return `<p class="eyebrow" style="margin-top:18px;">${p.name}（${p.level}）</p><div class="tier-grid">${rows}</div>`;
+    }).join('');
+    body = `
+      <h2 class="scene-title">成就解鎖條件</h2>
+      <p class="scene-body" style="color:var(--ink-dim);font-size:13px;">這裡列出每個成就的實際判定條件；成就牆給玩家看的說明會刻意寫得模糊一點，保留一點探索樂趣。</p>
+      <div class="tier-grid">${achRows}</div>
+      <p class="eyebrow" style="margin-top:22px;">稱號（人格分析）判定邏輯</p>
+      <p class="scene-body" style="color:var(--ink-dim);font-size:13px;">判定優先順序：①如果整輪都沒有不健康選項，依健康選項次數（≥5 或 &lt;5）分成兩種「成長型」稱號。②如果這輪剛好只把「一位」NPC 的容忍度逼到臨界點（NPC臨界點機制），直接對應到那一位的稱號——這是目前最容易「指定拿到某個稱號」的做法。③以上都不成立時，退回統計本輪「不健康選項」分別牽涉到哪位 NPC，挑出被做出最多不當選擇的那一位決定稱號。</p>
+      ${titleSections}
+    `;
+  } else {
+    body = `
+      <h2 class="scene-title">數值調整台</h2>
+      <p class="scene-body" style="color:var(--ink-dim);">直接檢視、覆寫每個角色、每個情境、每個選項的三圍與隱藏數值加減。覆寫值只存在這台瀏覽器（localStorage），不會動到原始劇本設定，可隨時個別重置或全部重置。</p>
+      <div class="tier-grid">
+        ${PERSONA_ORDER.map(pid=>{
+          const p=PERSONAS[pid];
+          const ovCount = OVERRIDES[pid] ? Object.keys(OVERRIDES[pid]).length : 0;
+          return `<button class="tier-card" onclick="devPersonaScreen('${pid}')">
+            <div class="tlevel">${p.level}</div>
+            <div class="tname">${p.name}</div>
+            <div class="tdept">${p.dept}</div>
+            ${ovCount? `<div class="troster">已覆寫 ${ovCount} 個情境</div>`:''}
+          </button>`;
+        }).join('')}
+      </div>
+      <div class="continue-row" style="justify-content:flex-end;flex-wrap:wrap;gap:8px;">
         <button class="btn-ghost" onclick="devExport()">📤 匯出覆寫檔</button>
         <label class="btn-ghost" style="cursor:pointer;">📥 匯入覆寫檔<input type="file" accept=".json" style="display:none;" onchange="devImport(this.files[0])"></label>
         <button class="btn-ghost" style="border-style:dashed;color:var(--crimson);" onclick="devResetAll()">🗑 全部重置</button>
       </div>
+    `;
+  }
+  appendCard(`
+    <p class="eyebrow">🛠 開發者模式</p>
+    <div class="continue-row" style="justify-content:flex-start;gap:8px;margin-top:0;margin-bottom:16px;">
+      ${tabBtn('values','數值調整台')}
+      ${tabBtn('reference','稱號／成就條件說明')}
     </div>
+    ${body}
+    <div class="continue-row"><button class="btn-ghost" onclick="goHome()">返回主畫面</button></div>
   `);
 }
 window.goDevMode = goDevMode;
@@ -1809,8 +2143,13 @@ function showChangelog(){
     </div>
   `).join('');
   appendCard(`
-    <p class="eyebrow">版本紀錄</p>
-    <h2 class="scene-title">《霸凌王》 開發歷程</h2>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px;">
+      <div>
+        <p class="eyebrow">版本紀錄</p>
+        <h2 class="scene-title" style="margin:0;">《霸凌王》 開發歷程</h2>
+      </div>
+      <button class="btn-ghost" onclick="goHome()">← 返回主畫面</button>
+    </div>
     ${rows}
     <div class="continue-row"><button class="btn-ghost" onclick="goHome()">返回主畫面</button></div>
   `);
@@ -1826,20 +2165,31 @@ function goPersonaSelect(){
     <div class="tier-grid">
       ${PERSONA_ORDER.map(pid=>{
         const p=PERSONAS[pid]; const m=personaMeta(pid);
+        const portrait = PERSONA_PORTRAIT[pid];
         if(!personaUnlocked(pid)){
-          return `<div class="tier-card" style="opacity:.55;cursor:default;">
-            <div class="tlevel">${p.level}</div>
-            <div class="tname">${p.name}</div>
-            <div class="tdept" style="color:var(--ink-dim);">🔒 ${p.dept}</div>
+          return `<div class="tier-card locked" style="opacity:.7;cursor:default;">
+            <div class="thead">
+              ${portrait? `<img class="tportrait" src="${portrait}" alt="${p.name}" onclick="event.stopPropagation();openLightbox('${portrait}')">` : ''}
+              <div>
+                <div class="tlevel">${p.level}</div>
+                <div class="tname">${p.name}</div>
+                <div class="tdept" style="color:var(--ink-dim);">🔒 ${p.dept}</div>
+              </div>
+            </div>
             <div class="troster">${unlockProgressText(pid)}</div>
           </div>`;
         }
         return `<button class="tier-card" onclick="goPersonaDetail('${pid}')">
-          <div class="tlevel">${p.level}</div>
-          <div class="tname">${p.name}</div>
-          <div class="tdept">${p.dept}</div>
+          <div class="thead">
+            ${portrait? `<img class="tportrait" src="${portrait}" alt="${p.name}" onclick="event.stopPropagation();openLightbox('${portrait}')">` : ''}
+            <div>
+              <div class="tlevel">${p.level}</div>
+              <div class="tname">${p.name}</div>
+              <div class="tdept">${p.dept}</div>
+            </div>
+          </div>
           <div class="tblurb">${p.blurb}</div>
-          <div class="troster">同場人物：${p.npcs.map(n=>(n.icon||'')+' '+n.name+'（'+n.role+'）').join('、')}</div>
+          <div class="troster">同場人物：${p.npcs.map(n=>npcIconHtml(pid,n.key,n.icon,16)+' '+n.name+'（'+n.role+'）').join('、')}</div>
           ${m.runsCompleted>0? `<div class="troster">已完成 ${m.runsCompleted} 輪　結局 ${m.endings.length}/${p.endings.length}</div>`:''}
         </button>`;
       }).join('')}
@@ -1862,18 +2212,20 @@ function goPersonaDetail(pid){
   const m = personaMeta(pid);
   clearLog(); setGaugesVisible(false);
   const hellUnlocked = m.runsCompleted>=1;
+  const portrait = PERSONA_PORTRAIT[pid];
   appendCard(`
-    <p class="eyebrow">${persona.level} · ${persona.name}</p>
-    <h2 class="scene-title">${persona.dept}</h2>
+    ${portrait? `<img class="portrait-feature" src="${portrait}" alt="${persona.name}" onclick="openLightbox('${portrait}')">` : ''}
+    <p class="eyebrow">${persona.level} · ${persona.dept}</p>
+    <h2 class="scene-title">${persona.name}</h2>
     <p class="scene-body">${persona.blurb}</p>
-    <p class="scene-body" style="color:var(--ink-dim);font-size:13.5px;">同場人物：${persona.npcs.map(n=>(n.icon||'')+' '+n.name+'（'+n.role+'）').join('、')}</p>
+    <p class="scene-body" style="color:var(--ink-dim);font-size:13.5px;">同場人物：${persona.npcs.map(n=>npcIconHtml(pid,n.key,n.icon,18)+' '+n.name+'（'+n.role+'）').join('、')}</p>
     ${m.runsCompleted>0? `<div class="meta-row">
       <div class="meta-tile"><div class="mv">${m.runsCompleted}</div><div class="ml">累計輪數</div></div>
       <div class="meta-tile"><div class="mv">${m.endings.length}/${persona.endings.length}</div><div class="ml">結局收集</div></div>
       <div class="meta-tile"><div class="mv">${m.titles.length}</div><div class="ml">稱號牆</div></div>
     </div>` : ''}
     ${hellUnlocked? `<div class="hellbox"><label><input type="checkbox" id="hellToggle"> ☠ 啟動 New Game+ 地獄模式（隱藏數值增幅 ×1.2，選項會改用包裝過的中性說法，考驗你能不能認出偽裝過的霸凌）</label></div>`:''}
-    <p class="eyebrow" style="margin-top:18px;">選擇劇本長度</p>
+    <p class="eyebrow" style="margin-top:18px;clear:both;">選擇劇本長度</p>
     <div class="tier-grid" style="grid-template-columns:1fr 1fr;">
       <label class="tier-card" style="cursor:pointer;"><input type="radio" name="runLength" value="short" checked style="margin-bottom:8px;"><div class="tname" style="font-size:15px;">短劇本</div><div class="tblurb">抽 ${Math.min(LENGTH_OPTIONS.short, availablePool(persona).length)} 個日常情境，約10分鐘，適合快速重玩、收集不同結局</div></label>
       <label class="tier-card" style="cursor:pointer;"><input type="radio" name="runLength" value="long" style="margin-bottom:8px;"><div class="tname" style="font-size:15px;">長劇本</div><div class="tblurb">抽 ${Math.min(LENGTH_OPTIONS.long, availablePool(persona).length)} 個日常情境，約18-20分鐘，事件更完整、數值變化更豐富</div></label>
@@ -1886,15 +2238,19 @@ window.goPersonaDetail = goPersonaDetail;
 const LENGTH_OPTIONS = {short:4, long:8};
 const QUIZ_COUNT = {short:2, long:3};
 
-function eventAvailable(ev){
+function eventAvailable(ev, persona){
   if(!ev.requires) return true;
   if(ev.requires.personaCompleted){
     const m = META[ev.requires.personaCompleted];
-    return !!(m && m.runsCompleted>=1);
+    if(!(m && m.runsCompleted>=1)) return false;
+  }
+  if(ev.requires.hellCompleted){
+    const m = personaMeta(persona.id);
+    if(!(m.runsHell>=1)) return false;
   }
   return true;
 }
-function availablePool(persona){ return persona.pool.filter(eventAvailable); }
+function availablePool(persona){ return persona.pool.filter(ev=>eventAvailable(ev, persona)); }
 function drawPool(persona, count){
   const byNpc = {};
   availablePool(persona).forEach(ev=>{ const k = ev.npc || '__none__'; (byNpc[k]=byNpc[k]||[]).push(ev.id); });
@@ -1918,17 +2274,19 @@ function startRun(pid){
   const drawCount = Math.min(LENGTH_OPTIONS[lengthChoice], availablePool(persona).length);
   clearLog();
   S = freshState(persona, hell);
+  S.modifier = pickRunModifier();
+  if(S.modifier.apply) S.modifier.apply(S);
   S.runLength = lengthChoice;
   S.drawnIds = drawPool(persona, drawCount);
   S.seq = buildSequence(S.drawnIds.length, QUIZ_COUNT[lengthChoice] || 2);
-  S.step = 1;
+  S.step = 0;
   setTopbar(persona);
   goStep();
 }
 window.startRun = startRun;
 
 function goStep(){
-  updateGauges();
+  updateGauges(undefined, !!(S.modifier && S.modifier.id==='blind_numbers' && !S.blindRevealed));
   const tag = S.seq[S.step] || 'ending';
   chapterTag.textContent = S.persona.name+' · '+S.persona.dept+' · 案卷 '+String(S.step).padStart(2,'0')+'/'+(S.seq.length-1);
   render(tag);
@@ -1950,6 +2308,7 @@ function renderIntro(){
     <h2 class="scene-title">恭喜你，${p.name}</h2>
     ${p.introLines.map(s=>`<p class="scene-body">${s}</p>`).join('')}
     <div class="feedback-box"><b>系統提示：</b>【霸凌王養成系統啟動】${S.hell?'　<span style="color:var(--crimson)">☠ HR地獄模式已啟動</span>':''}</div>
+    ${S.modifier ? `<div class="feedback-box" style="border-left:3px solid var(--gold);"><b>🎴 本輪詞條：${S.modifier.name}</b><br>${S.modifier.desc}</div>` : ''}
     <div class="continue-row"><button class="btn-primary" onclick="advance()">接下這個位置</button></div>
   `);
 }
@@ -1962,6 +2321,10 @@ function displayLabel(o){ return (S && S.hell && o.hellLabel) ? o.hellLabel : o.
 function eventIcon(persona, ev){
   if(ev.icon) return ev.icon;
   const npc = ev.npc && persona.npcs.find(n=>n.key===ev.npc);
+  if(npc){
+    const portraitIcon = npcIconHtml(persona.id, npc.key, null, 26);
+    if(portraitIcon) return portraitIcon;
+  }
   return (npc && npc.icon) ? npc.icon : (persona.orgIcon || '📋');
 }
 function renderEvent(ev, sourceId){
@@ -1969,6 +2332,7 @@ function renderEvent(ev, sourceId){
   const kicker = ev.icon==='🎭' ? '黑色幽默插曲' : (ev.icon==='🔗' ? '跨部門客串' : '日常情境');
   const card = appendCard(`
     <p class="eyebrow">${icon} ${kicker} · ${ev.title}</p>
+    ${bannerHtml(ev)}
     ${ev.scene.map(s=>`<p class="scene-body">${s}</p>`).join('')}
     <div class="opt-list">${ev.options.map((o,i)=>`<button class="opt-btn" data-i="${i}">${displayLabel(o)}</button>`).join('')}</div>
   `);
@@ -1990,6 +2354,7 @@ function renderFixed(ev, sourceId){
   const icon = eventIcon(S.persona, ev);
   const card = appendCard(`
     <p class="eyebrow">${icon} 固定事件 · ${ev.title}</p>
+    ${bannerHtml(ev)}
     ${ev.scene.map(s=>`<p class="scene-body">${s}</p>`).join('')}
     ${extraLines.map(s=>`<p class="scene-body" style="color:var(--gold);font-style:italic;">${s}</p>`).join('')}
     <div class="opt-list">${ev.options.map((o,i)=>`<button class="opt-btn" data-i="${i}">${displayLabel(o)}</button>`).join('')}</div>
@@ -1997,43 +2362,98 @@ function renderFixed(ev, sourceId){
   renderOptions(card, ev, sourceId);
 }
 const CLIMAX_DICE_MULT = {1:1.1,2:1.2,3:1.3,4:1.4,5:1.5,6:1.6};
-function choose(card, opt, npcKey, sourceId, optIndex){
-  let effects = effectiveEffects(S.persona.id, sourceId, optIndex, opt.effects);
-  let diceHtml = '';
-  if(opt.victim){
-    const roll = 1+Math.floor(Math.random()*6);
-    const mult = CLIMAX_DICE_MULT[roll];
-    const scaled = {};
-    Object.keys(effects).forEach(k=>{
-      const v = effects[k];
-      scaled[k] = v>=0 ? Math.round(v*mult) : -Math.round(Math.abs(v)*mult);
-    });
-    effects = scaled;
-    diceHtml = `<div class="dice-line">🎲 命運骰：擲出 <b>${roll}</b> → 效果 ×${mult.toFixed(1)}（不確定性加成）</div>`;
+const STREAK_THRESHOLD = 3;
+function npcBreakpointHtml(npcKey){
+  const npc = S.persona.npcs.find(n=>n.key===npcKey);
+  if(!npc) return '';
+  S.brokenNpcs.add(npcKey);
+  S.noBreakRun = false;
+  S.flags.add('broken_'+npcKey);
+  return `<div class="feedback-box" style="border-left:3px solid var(--crimson);"><b>⚠ 臨界點：</b>${npc.name}的容忍已經探底。你看得出來，他／她看你的眼神不一樣了——接下來的相處，可能不會再像過去那樣配合你。</div>`;
+}
+function streakHtml(optIndex){
+  const threshold = (S.modifier && S.modifier.id==='hair_trigger') ? 2 : STREAK_THRESHOLD;
+  if(optIndex===S.streakTier){ S.streakLen++; } else { S.streakTier=optIndex; S.streakLen=1; S.streakFired=false; }
+  if(S.streakLen>=threshold && !S.streakFired){
+    S.streakFired = true;
+    if(optIndex===0){
+      S.flags.add('streak_harsh');
+      return `<div class="feedback-box" style="border-left:3px solid var(--crimson);"><b>⚠ 系統偵測：</b>你已經連續 ${S.streakLen} 次選擇最強硬的處理方式。這種手法，好像變得越來越順手了。</div>`;
+    }
+    if(optIndex===2){
+      S.flags.add('streak_healthy');
+      return `<div class="feedback-box"><b>系統提示：</b>你已經連續 ${S.streakLen} 次選擇最溫和的處理方式。這樣下去，你什麼時候才能當上霸凌王？</div>`;
+    }
   }
-  const deltas = applyEffects(effects, npcKey);
-  S.history.push({id:sourceId, npc:npcKey, healthy:!!opt.healthy, tolDelta:(effects.tol!==undefined?effects.tol:0)});
-  if(opt.setFlag) S.flags.add(opt.setFlag);
-  updateGauges(deltas);
+  return '';
+}
+function choose(card, opt, npcKey, sourceId, optIndex){
   card.querySelector('.opt-list').innerHTML = `<div class="chosen-line"><span class="ctag">你的選擇</span><span>${displayLabel(opt)}</span></div>`;
-  const cont = ()=>{
+  const finish = (rollLabel, mult, multLabel)=>{
+    let effects = effectiveEffects(S.persona.id, sourceId, optIndex, opt.effects);
+    if(opt.healthy && S.modifier && S.modifier.id==='no_mercy'){
+      const dampened = {};
+      Object.keys(effects).forEach(k=>{ dampened[k] = Math.round(effects[k]*0.8); });
+      effects = dampened;
+    }
+    let diceHtml = '';
+    if(mult!==undefined){
+      const scaled = {};
+      Object.keys(effects).forEach(k=>{
+        const v = effects[k];
+        scaled[k] = v>=0 ? Math.round(v*mult) : -Math.round(Math.abs(v)*mult);
+      });
+      effects = scaled;
+      diceHtml = `<div class="dice-line">🎲 命運骰結果：擲出 <b>${rollLabel}</b> → 效果 ×${multLabel}</div>`;
+    }
+    const tolBefore = npcKey ? S.tol[npcKey] : null;
+    const deltas = applyEffects(effects, npcKey);
+    const breakpointHtml = (npcKey && tolBefore>0 && S.tol[npcKey]<=0 && !S.brokenNpcs.has(npcKey)) ? npcBreakpointHtml(npcKey) : '';
+    const streakLine = (sourceId!=='dilemma') ? streakHtml(optIndex) : '';
+    S.history.push({id:sourceId, npc:npcKey, healthy:!!opt.healthy, tolDelta:(effects.tol!==undefined?effects.tol:0)});
+    if(opt.setFlag) S.flags.add(opt.setFlag);
+    const blind = !!(S.modifier && S.modifier.id==='blind_numbers' && !S.blindRevealed);
+    updateGauges(deltas, blind);
+    if(diceHtml) card.insertAdjacentHTML('beforeend', diceHtml);
     if(opt.feedback) card.insertAdjacentHTML('beforeend', `<div class="feedback-box">${opt.feedback}</div>`);
-    card.insertAdjacentHTML('beforeend', deltaChipsHtml(S.persona, deltas));
+    if(blind){
+      Object.keys(deltas).forEach(k=>{ S.hiddenDeltaSum[k] = (S.hiddenDeltaSum[k]||0) + deltas[k]; });
+      card.insertAdjacentHTML('beforeend', `<div class="feedback-box" style="font-size:12.5px;color:var(--ink-dim);">🔒 這次的三圍變化先保密，等反差時刻一次揭曉。</div>`);
+    } else {
+      card.insertAdjacentHTML('beforeend', deltaChipsHtml(S.persona, deltas));
+    }
     if(opt.voice){
       const npc = npcKey ? S.persona.npcs.find(n=>n.key===npcKey) : null;
       const who = npc ? npc.name : '現場氣氛';
       card.insertAdjacentHTML('beforeend', `<div class="voice-line"><b>${who}心裡：</b>「${opt.voice}」</div>`);
     }
+    if(breakpointHtml) card.insertAdjacentHTML('beforeend', breakpointHtml);
+    if(streakLine) card.insertAdjacentHTML('beforeend', streakLine);
     card.insertAdjacentHTML('beforeend', `<div class="continue-row"><button class="btn-primary" onclick="advance()">繼續</button></div>`);
   };
-  if(opt.victim){ showVictim(opt.victim, cont, diceHtml); } else cont();
+  if(opt.victim){
+    const doubleDice = S.modifier && S.modifier.id==='double_dice';
+    showVictimWithDice(opt.victim, doubleDice, finish);
+  } else {
+    finish();
+  }
 }
-function advance(){ S.step++; goStep(); }
+let ADVANCE_LOCK = false;
+function advance(){
+  if(ADVANCE_LOCK) return;
+  ADVANCE_LOCK = true;
+  document.querySelectorAll('button[onclick="advance()"]').forEach(b=>{
+    b.disabled = true; b.style.opacity = '.4'; b.style.cursor = 'not-allowed';
+  });
+  S.step++; goStep();
+  ADVANCE_LOCK = false;
+}
 window.advance = advance;
 
 function renderQuiz(n){
   const persona = S.persona;
-  const recent = S.history.slice(S.quizMark).filter(h=>!h.healthy);
+  const lastEntry = S.history.length ? S.history[S.history.length-1] : null;
+  const recent = (lastEntry && !lastEntry.healthy) ? [lastEntry] : [];
   S.quizMark = S.history.length;
   const quizLabel = persona.quizLabel || '合理化檢查';
   const quizQuestion = persona.quizQuestion || '你是怎麼看待剛才那幾個決定的？';
@@ -2050,7 +2470,7 @@ function renderQuiz(n){
   const bank = persona.rationalize;
   const seen = new Set();
   const items = [];
-  recent.slice(0,3).forEach(h=>{
+  recent.forEach(h=>{
     const key = (h.npc && bank[h.npc]) ? h.npc : 'generic';
     const title = getEventTitle(persona,h.id);
     bank[key].forEach(phrase=>{
@@ -2087,10 +2507,16 @@ function renderQuiz(n){
       const applied = S[gKey]-before;
       if(applied!==0) deltas[gKey]=applied;
     }
-    updateGauges(deltas);
+    const blind = !!(S.modifier && S.modifier.id==='blind_numbers' && !S.blindRevealed);
+    updateGauges(deltas, blind);
     card.querySelector('#quizSubmit').outerHTML='';
     card.insertAdjacentHTML('beforeend', `<div class="feedback-box">${quizSubmitLine}</div>`);
-    card.insertAdjacentHTML('beforeend', deltaChipsHtml(persona, deltas));
+    if(blind){
+      Object.keys(deltas).forEach(k=>{ S.hiddenDeltaSum[k] = (S.hiddenDeltaSum[k]||0) + deltas[k]; });
+      card.insertAdjacentHTML('beforeend', `<div class="feedback-box" style="font-size:12.5px;color:var(--ink-dim);">🔒 這次的三圍變化先保密，等反差時刻一次揭曉。</div>`);
+    } else {
+      card.insertAdjacentHTML('beforeend', deltaChipsHtml(persona, deltas));
+    }
     card.insertAdjacentHTML('beforeend', `<div class="continue-row"><button class="btn-primary" onclick="advance()">繼續</button></div>`);
   };
 }
@@ -2098,6 +2524,10 @@ function renderMidReveal(){
   const mr = S.persona.midReveal;
   const leftVal = mr.leftCompute ? mr.leftCompute(S) : (mr.leftFromGauge!==undefined ? clamp(S[mr.leftFromGauge],0,100)+'%' : mr.leftFixed);
   const rightVal = mr.rightCompute ? mr.rightCompute(S) : mr.rightFixed;
+  const blindReveal = (S.modifier && S.modifier.id==='blind_numbers' && !S.blindRevealed && Object.keys(S.hiddenDeltaSum).length)
+    ? `<div class="feedback-box" style="border-left:3px solid var(--gold);margin-top:14px;"><b>🔒 心裡有數：這段時間累積的三圍變化，一次揭曉——</b>${deltaChipsHtml(S.persona, S.hiddenDeltaSum)}</div>`
+    : '';
+  if(S.modifier && S.modifier.id==='blind_numbers'){ S.blindRevealed = true; updateGauges(); }
   appendCard(`
     <p class="eyebrow">固定事件 · 反差時刻</p>
     ${mr.lines.map(s=>`<p class="scene-body">${s}</p>`).join('')}
@@ -2106,6 +2536,7 @@ function renderMidReveal(){
       <div class="split-tile ${mr.rightClass}"><div class="num mono">${rightVal}</div><div class="lbl">${mr.rightLabel}</div></div>
     </div>
     <p class="scene-body" style="color:var(--ink-dim);font-size:13.5px;">${mr.after}</p>
+    ${blindReveal}
     <div class="continue-row"><button class="btn-primary" onclick="advance()">繼續</button></div>
   `);
 }
@@ -2159,13 +2590,13 @@ function renderJudgment(){
   appendCard(`
     <p class="eyebrow">地獄鏡子 · 最終審判</p>
     <h2 class="scene-title">三段證詞</h2>
-    ${p.npcs.map(n=>`<div class="testimony"><div class="who">${n.icon||""} ${n.name}（${n.role}）</div><p>${getTestimony(p,n.key)}</p></div>`).join('')}
+    ${p.npcs.map(n=>`<div class="testimony"><div class="who">${npcIconHtml(p.id,n.key,n.icon,20)} ${n.name}（${n.role}）</div><p>${getTestimony(p,n.key)}</p></div>`).join('')}
     <h2 class="scene-title" style="font-size:18px;margin-top:22px;">隱藏數據（全程隱藏至此刻）</h2>
     <div class="hidden-reveal">
-      <div class="hr-row"><span class="hr-lbl">${hl.respect}</span><span class="hr-val mono">${Math.round(respect)}</span></div>
-      <div class="hr-row"><span class="hr-lbl">${hl.safety}</span><span class="hr-val mono">${Math.round(safety)}</span></div>
-      <div class="hr-row"><span class="hr-lbl">${hl.teamwork}</span><span class="hr-val mono">${Math.round(teamwork)}</span></div>
-      <div class="hr-row"><span class="hr-lbl">${hl.risk}</span><span class="hr-val mono">${Math.round(S.risk)}</span></div>
+      <div class="hr-row"><span class="hr-lbl">${hl.respect}</span><span class="hr-val mono">${Math.round(respect)} ／ 100</span></div>
+      <div class="hr-row"><span class="hr-lbl">${hl.safety}</span><span class="hr-val mono">${Math.round(safety)} ／ 100</span></div>
+      <div class="hr-row"><span class="hr-lbl">${hl.teamwork}</span><span class="hr-val mono">${Math.round(teamwork)} ／ 100</span></div>
+      <div class="hr-row"><span class="hr-lbl">${hl.risk}</span><span class="hr-val mono">${Math.round(clamp(S.risk,0,200))} ／ 200</span></div>
     </div>
     <div class="continue-row"><button class="btn-primary" onclick="advance()">接受審判</button></div>
   `);
@@ -2186,6 +2617,16 @@ function computeEnding(){
     if(S.dilemmaChoice==='B') return 'B';
     return 'D';
   }
+  if(S.persona.id==='staff'){
+    // 老陳劇本：g1(信任度)跟其他角色的g1方向相反——從眾／霸凌會讓信任度下降而非上升，門檻判定獨立處理
+    if(S.risk>65) return 'B';
+    if(S.toxicity>60) return 'C';
+    if(S.g1<35 && S.fear>50 && S.g3>65) return 'A';
+    if(ratio>=0.85 && S.dilemmaChoice==='C') return 'G';
+    if(ratio>=0.55) return 'F';
+    if(ratio>=0.4 && S.dilemmaChoice==='C') return 'E';
+    return 'D';
+  }
   // 門檻整體放寬：加重三圍連動後，數值會比以前更快分化，原本的高標準已經很難踩到，改成較容易觸及的區間
   if(S.risk>65) return 'B';
   if(S.toxicity>60) return 'C';
@@ -2202,6 +2643,10 @@ function computePersonality(persona){
   if(unhealthyTotal===0){
     return healthyTotal>=5? persona.personalityMap.growthHigh : persona.personalityMap.growthLow;
   }
+  if(S.brokenNpcs && S.brokenNpcs.size===1){
+    const brokenKey = [...S.brokenNpcs][0];
+    if(persona.personalityMap[brokenKey]) return persona.personalityMap[brokenKey];
+  }
   const top = Object.entries(tally).sort((a,b)=>b[1]-a[1])[0][0];
   return persona.personalityMap[top] || persona.personalityMap.growthLow;
 }
@@ -2217,6 +2662,7 @@ function renderEnding(){
   if(!m.endings.includes(endId)) m.endings.push(endId);
   if(!m.titles.includes(personality.name)) m.titles.push(personality.name);
   saveMeta(META);
+  const newlyUnlocked = checkAchievements(S);
 
   const galleryCells = persona.endings.map(e=>{
     const got = m.endings.includes(e.id);
@@ -2241,7 +2687,9 @@ function renderEnding(){
     <p class="eyebrow" style="margin-top:18px;">稱號牆</p>
     <div class="titlewall">${m.titles.map(t=>`<span class="tchip">${t}</span>`).join('')}</div>
     <p style="font-size:12.5px;color:var(--ink-dim);margin-top:10px;">累計完成 <b class="mono">${m.runsCompleted}</b> 輪${m.runsCompleted>=3?'　·　隱藏支線已解鎖':''}</p>
+    ${newlyUnlocked.length? `<div class="feedback-box" style="border-left:3px solid var(--gold);margin-top:14px;"><b>🏆 新解鎖成就：</b>${newlyUnlocked.map(a=>`<div style="margin-top:6px;"><b>${a.name}</b> — ${a.desc}</div>`).join('')}</div>` : ''}
     <div class="continue-row" style="gap:10px;">
+      <button class="btn-ghost" onclick="goAchievements()">🏆 成就牆</button>
       <button class="btn-ghost" onclick="goHome()">回到主畫面</button>
       <button class="btn-primary" onclick="goPersonaSelect()">再玩一輪（可換角色）</button>
     </div>
