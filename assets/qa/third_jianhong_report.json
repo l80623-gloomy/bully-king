@@ -1,0 +1,25 @@
+{
+  "key": "third_jianhong",
+  "source": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\archive\\NPC_建宏_生成原稿_v1.png",
+  "output": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\images\\characters\\NPC_建宏_透明立繪_v1.png",
+  "size": [
+    1024,
+    1536
+  ],
+  "mode": "RGBA",
+  "source_preserved": true,
+  "source_sha256": "1af59db553bb05bad90ef35e1e5ac67b047167b0534bb486c5a9c81ff2613ca6",
+  "output_sha256": "7f9c3d6579eece9c7e8144c72f45da8ff131696936ba96050d9b46a0e9c46485",
+  "alpha_threshold": 16,
+  "transparent_pixels": 1046604,
+  "partial_pixels": 511219,
+  "opaque_pixels": 15041,
+  "bbox": [
+    172,
+    11,
+    981,
+    1524
+  ],
+  "method": "Local low-alpha glow removal and alpha-range remap.",
+  "network_used": false
+}

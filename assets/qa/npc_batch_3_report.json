@@ -1,0 +1,25 @@
+{
+  "key": "npc_batch_3",
+  "source": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\archive\\NPC_小杰_生成原稿_未去背_v1.png",
+  "output": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\images\\NPC_小杰_透明立繪_v1.png",
+  "size": [
+    1024,
+    1536
+  ],
+  "mode": "RGBA",
+  "source_preserved": true,
+  "source_sha256": "3d92a49988ee07a71b096d49d4059c764163bf5885f595b8b645be1093f58002",
+  "output_sha256": "b341a59c8f0fa2414c267683fbc0a831a957cbd3689530adf4490bdfd23c130d",
+  "transparent_pixels": 1116395,
+  "partial_pixels": 7511,
+  "opaque_pixels": 448958,
+  "bbox": [
+    248,
+    14,
+    800,
+    1528
+  ],
+  "method": "Local chroma/darkness segmentation; small hole fill; narrow edge color extension. Source-specific, not general purpose.",
+  "network_used": false,
+  "interior_rgb_preserved": true
+}

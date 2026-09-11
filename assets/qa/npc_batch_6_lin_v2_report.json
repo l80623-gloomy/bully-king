@@ -1,0 +1,30 @@
+{
+  "key": "npc_batch_6_lin_v2",
+  "source": "C:\\Users\\gloom.lai\\.codex\\generated_images\\01a07fa7-77df-7882-bc11-4e0951a8056b\\exec-994040e0-2f2c-4065-bbf0-3fcc156a90e3.png",
+  "output": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\images\\characters\\NPC_林班長_透明立繪_v2.png",
+  "size": [
+    1024,
+    1536
+  ],
+  "mode": "RGBA",
+  "source_preserved": true,
+  "source_sha256": "8a352c09c9320f5aa42b5d309755a0e74b1899b8cb333a0cea740e1dbc215199",
+  "output_sha256": "bcdafc623a17f0f3c92a76f61b99991ee9451dada95c595613d40503bed21018",
+  "transparent_pixels": 1026147,
+  "partial_pixels": 7216,
+  "opaque_pixels": 539501,
+  "bbox": [
+    151,
+    18,
+    937,
+    1517
+  ],
+  "thresholds": {
+    "chroma": 20.0,
+    "dark": 185.0,
+    "fill_hole_max": 300
+  },
+  "method": "Local bright-neutral checkerboard segmentation with limited hole fill and narrow edge color extension.",
+  "network_used": false,
+  "interior_rgb_preserved": true
+}

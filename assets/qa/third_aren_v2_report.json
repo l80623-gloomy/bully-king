@@ -1,0 +1,33 @@
+{
+  "key": "third_aren_v2",
+  "source": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\archive\\NPC_阿仁_生成原稿_v1.png",
+  "output": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\images\\characters\\NPC_阿仁_透明立繪_v2.png",
+  "size": [
+    1024,
+    1536
+  ],
+  "mode": "RGBA",
+  "source_preserved": true,
+  "source_sha256": "60689ecfdafb9af86d2740f4f8dd59c11e617f515603ff431399bacafdddbc3b",
+  "output_sha256": "d9555f437e937cf38eea532e8a8e00d44917719c54a741c44fb680735cab218f",
+  "transparent_pixels": 1045942,
+  "partial_pixels": 8202,
+  "opaque_pixels": 518720,
+  "bbox": [
+    185,
+    13,
+    828,
+    1523
+  ],
+  "thresholds": {
+    "chroma": 20.0,
+    "dark": 185.0,
+    "fill_hole_max": 500,
+    "shrink": 0.35,
+    "border_color_distance": 0.0,
+    "remove_bg_like_max": 0
+  },
+  "method": "Local GrabCut checkerboard segmentation with limited hole fill and narrow edge color extension.",
+  "network_used": false,
+  "interior_rgb_preserved": true
+}

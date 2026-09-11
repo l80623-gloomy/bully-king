@@ -1,0 +1,31 @@
+{
+  "key": "npc_batch_8_xiaomei",
+  "source": "C:\\Users\\gloom.lai\\.codex\\generated_images\\01a07fa7-77df-7882-bc11-4e0951a8056b\\exec-71595273-8142-4da8-ba48-a883abc4a9fd.png",
+  "output": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\images\\characters\\NPC_小美_透明立繪_v1.png",
+  "size": [
+    1024,
+    1536
+  ],
+  "mode": "RGBA",
+  "source_preserved": true,
+  "source_sha256": "e249d0e638b09eefa18c8286ff5d278b4c45cec5c2cd08a31e33687b9f900d8e",
+  "output_sha256": "5b037239be95d67bd6e58e2e7e4046fca1db7edcf9c0b671429c7c7e8827cec1",
+  "transparent_pixels": 1087742,
+  "partial_pixels": 6150,
+  "opaque_pixels": 478972,
+  "bbox": [
+    247,
+    11,
+    865,
+    1526
+  ],
+  "thresholds": {
+    "chroma": 20.0,
+    "dark": 185.0,
+    "fill_hole_max": 300,
+    "shrink": 0.5
+  },
+  "method": "Local GrabCut checkerboard segmentation with limited hole fill and narrow edge color extension.",
+  "network_used": false,
+  "interior_rgb_preserved": true
+}

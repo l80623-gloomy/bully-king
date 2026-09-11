@@ -1,0 +1,25 @@
+{
+  "key": "npc_batch_5",
+  "source": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\archive\\NPC_小魚_生成原稿_未去背_v1.png",
+  "output": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\images\\NPC_小魚_透明立繪_v1.png",
+  "size": [
+    1024,
+    1536
+  ],
+  "mode": "RGBA",
+  "source_preserved": true,
+  "source_sha256": "628f81afc04c7cdbd7c8b04a23d7ff4e580946b9b7290e99812a7b4352842cdf",
+  "output_sha256": "110c56cc70af17e84000cbb8248a78d1e169767dcdff3812c2dfc84773cde149",
+  "transparent_pixels": 1141598,
+  "partial_pixels": 7598,
+  "opaque_pixels": 423668,
+  "bbox": [
+    260,
+    26,
+    794,
+    1523
+  ],
+  "method": "Local chroma/darkness segmentation; small hole fill; narrow edge color extension. Source-specific, not general purpose.",
+  "network_used": false,
+  "interior_rgb_preserved": true
+}

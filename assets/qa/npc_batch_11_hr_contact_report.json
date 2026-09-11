@@ -1,0 +1,33 @@
+{
+  "key": "npc_batch_11_hr_contact",
+  "source": "C:\\Users\\gloom.lai\\.codex\\generated_images\\01a07fa7-77df-7882-bc11-4e0951a8056b\\exec-0ec9ad04-b388-45fe-83d8-13317a63e586.png",
+  "output": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\images\\characters\\NPC_人資窗口_透明立繪_v1.png",
+  "size": [
+    1024,
+    1536
+  ],
+  "mode": "RGBA",
+  "source_preserved": true,
+  "source_sha256": "e38c7b8802121e9937b19a91c154a912a1c910f362de1f0fbc12d5d1f27f81d5",
+  "output_sha256": "b8e82e813ea1a5018ee659538d8fcaa4d502f92bb1d00c34fc4b53e6228268d0",
+  "transparent_pixels": 1170277,
+  "partial_pixels": 6368,
+  "opaque_pixels": 396219,
+  "bbox": [
+    275,
+    30,
+    832,
+    1517
+  ],
+  "thresholds": {
+    "chroma": 20.0,
+    "dark": 185.0,
+    "fill_hole_max": 300,
+    "shrink": 3.5,
+    "border_color_distance": 50.0,
+    "remove_bg_like_max": 0
+  },
+  "method": "Local GrabCut checkerboard segmentation with limited hole fill and narrow edge color extension.",
+  "network_used": false,
+  "interior_rgb_preserved": true
+}

@@ -1,0 +1,25 @@
+{
+  "key": "third_azhu",
+  "source": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\archive\\NPC_阿柱_生成原稿_v1.png",
+  "output": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\images\\characters\\NPC_阿柱_透明立繪_v1.png",
+  "size": [
+    1024,
+    1536
+  ],
+  "mode": "RGBA",
+  "source_preserved": true,
+  "source_sha256": "7900364c3ab8ad6d1e87f0c24d9c7f95a959922577382ce83c87b4966461e5a9",
+  "output_sha256": "6570430093a74da984c6d8dfc56f020f3058ed640863db225620bcdb4ab77852",
+  "alpha_threshold": 16,
+  "transparent_pixels": 981396,
+  "partial_pixels": 576854,
+  "opaque_pixels": 14614,
+  "bbox": [
+    173,
+    15,
+    851,
+    1520
+  ],
+  "method": "Local low-alpha glow removal and alpha-range remap.",
+  "network_used": false
+}

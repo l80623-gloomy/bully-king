@@ -1,0 +1,33 @@
+{
+  "key": "npc_batch_9_ahong_v2",
+  "source": "C:\\Users\\gloom.lai\\.codex\\generated_images\\01a07fa7-77df-7882-bc11-4e0951a8056b\\exec-fd121c99-8fff-4891-ac3b-016cb91b3e0f.png",
+  "output": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\images\\characters\\NPC_阿宏_透明立繪_v2.png",
+  "size": [
+    1024,
+    1536
+  ],
+  "mode": "RGBA",
+  "source_preserved": true,
+  "source_sha256": "56d8087b06e1c26574daddcc8a2b533821fe38df834ecb6c11d70aa50ca6bf44",
+  "output_sha256": "4c986761242c2c324aebc6c8265e8e496b6235c2ddf888d88d6f4b5b65a4882e",
+  "transparent_pixels": 1159209,
+  "partial_pixels": 6869,
+  "opaque_pixels": 406786,
+  "bbox": [
+    259,
+    15,
+    779,
+    1520
+  ],
+  "thresholds": {
+    "chroma": 20.0,
+    "dark": 185.0,
+    "fill_hole_max": 300,
+    "shrink": 3.5,
+    "border_color_distance": 50.0,
+    "remove_bg_like_max": 1200
+  },
+  "method": "Local GrabCut checkerboard segmentation with limited hole fill and narrow edge color extension.",
+  "network_used": false,
+  "interior_rgb_preserved": true
+}

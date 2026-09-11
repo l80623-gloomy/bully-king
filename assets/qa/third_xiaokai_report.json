@@ -1,0 +1,33 @@
+{
+  "key": "third_xiaokai",
+  "source": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\archive\\NPC_小凱_生成原稿_v1.png",
+  "output": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\images\\characters\\NPC_小凱_透明立繪_v1.png",
+  "size": [
+    1024,
+    1536
+  ],
+  "mode": "RGBA",
+  "source_preserved": true,
+  "source_sha256": "34e518532e4edb91c0f2f88972d1014bda427c1c82400bad8d66ead77fc8a15b",
+  "output_sha256": "511c8cd0685f1bbe4da88fab5aa24825eba408c860b895a5276e519ad6232c8f",
+  "transparent_pixels": 20995,
+  "partial_pixels": 9073,
+  "opaque_pixels": 1542796,
+  "bbox": [
+    0,
+    0,
+    1024,
+    1536
+  ],
+  "thresholds": {
+    "chroma": 20.0,
+    "dark": 185.0,
+    "fill_hole_max": 300,
+    "shrink": 0.35,
+    "border_color_distance": 0.0,
+    "remove_bg_like_max": 0
+  },
+  "method": "Local bright-neutral checkerboard segmentation with limited hole fill and narrow edge color extension.",
+  "network_used": false,
+  "interior_rgb_preserved": true
+}

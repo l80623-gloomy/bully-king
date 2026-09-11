@@ -1,0 +1,30 @@
+{
+  "key": "npc_batch_7_chensang_v2",
+  "source": "C:\\Users\\gloom.lai\\.codex\\generated_images\\01a07fa7-77df-7882-bc11-4e0951a8056b\\exec-59ea443e-21ef-4aa6-8821-b390f4285d0d.png",
+  "output": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\images\\characters\\NPC_陳桑_透明立繪_v2.png",
+  "size": [
+    1024,
+    1536
+  ],
+  "mode": "RGBA",
+  "source_preserved": true,
+  "source_sha256": "8473ad013a6f4f8ef0720a1e6ff3886769e2f5bcac35eb059af6d6b4cf56d3f3",
+  "output_sha256": "00589dce0b050990d85bda75635f113fede9fcba4deccc458caa9e41cf6237aa",
+  "transparent_pixels": 1088493,
+  "partial_pixels": 7036,
+  "opaque_pixels": 477335,
+  "bbox": [
+    117,
+    9,
+    843,
+    1528
+  ],
+  "thresholds": {
+    "chroma": 20.0,
+    "dark": 185.0,
+    "fill_hole_max": 300
+  },
+  "method": "Local GrabCut checkerboard segmentation with limited hole fill and narrow edge color extension.",
+  "network_used": false,
+  "interior_rgb_preserved": true
+}

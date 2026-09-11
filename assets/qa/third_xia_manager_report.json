@@ -1,0 +1,25 @@
+{
+  "key": "third_xia_manager",
+  "source": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\archive\\NPC_夏經理_生成原稿_v1.png",
+  "output": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\images\\characters\\NPC_夏經理_透明立繪_v1.png",
+  "size": [
+    1024,
+    1536
+  ],
+  "mode": "RGBA",
+  "source_preserved": true,
+  "source_sha256": "638e5deae27e9f0099354273d68bf46ad3ec4f69cfcddbc72a8f68abdbdb2561",
+  "output_sha256": "f55676cb5ec0010585c3139768ee8b75a2c5b3152ac11ee53829c031ca49374a",
+  "alpha_threshold": 16,
+  "transparent_pixels": 1100524,
+  "partial_pixels": 461251,
+  "opaque_pixels": 11089,
+  "bbox": [
+    251,
+    23,
+    834,
+    1525
+  ],
+  "method": "Local low-alpha glow removal and alpha-range remap.",
+  "network_used": false
+}

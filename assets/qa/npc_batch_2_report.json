@@ -1,0 +1,25 @@
+{
+  "key": "npc_batch_2",
+  "source": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\archive\\NPC_林襄理_生成原稿_未去背_v1.png",
+  "output": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\images\\NPC_林襄理_透明立繪_v1.png",
+  "size": [
+    1024,
+    1536
+  ],
+  "mode": "RGBA",
+  "source_preserved": true,
+  "source_sha256": "fbc2ef111ab013c5a321f6a92eaccdbeaf548622bcce947f54f3471b1b29d36f",
+  "output_sha256": "252511943a4401129514f6f305eb49d692b5e24480b05d0dfa44eb8066aef43d",
+  "transparent_pixels": 1144932,
+  "partial_pixels": 6504,
+  "opaque_pixels": 421428,
+  "bbox": [
+    274,
+    33,
+    814,
+    1527
+  ],
+  "method": "Local chroma/darkness segmentation; small hole fill; narrow edge color extension. Source-specific, not general purpose.",
+  "network_used": false,
+  "interior_rgb_preserved": true
+}

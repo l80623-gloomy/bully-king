@@ -1,0 +1,33 @@
+{
+  "key": "third_yating",
+  "source": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\archive\\NPC_雅婷_生成原稿_v1.png",
+  "output": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\images\\characters\\NPC_雅婷_透明立繪_v1.png",
+  "size": [
+    1024,
+    1536
+  ],
+  "mode": "RGBA",
+  "source_preserved": true,
+  "source_sha256": "63db737798012abe20a7293a4a13cff1bba97d2f3b4ef985220432d1738a0735",
+  "output_sha256": "9bc692de8b758dd33a26fd4d71ee51184a9dbd35920eec731281f11613c6b1fc",
+  "transparent_pixels": 17681,
+  "partial_pixels": 7850,
+  "opaque_pixels": 1547333,
+  "bbox": [
+    0,
+    0,
+    1024,
+    1536
+  ],
+  "thresholds": {
+    "chroma": 20.0,
+    "dark": 185.0,
+    "fill_hole_max": 300,
+    "shrink": 0.35,
+    "border_color_distance": 0.0,
+    "remove_bg_like_max": 0
+  },
+  "method": "Local bright-neutral checkerboard segmentation with limited hole fill and narrow edge color extension.",
+  "network_used": false,
+  "interior_rgb_preserved": true
+}

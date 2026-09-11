@@ -1,0 +1,25 @@
+{
+  "key": "npc_batch_1",
+  "source": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\archive\\NPC_金姊_生成原稿_未去背_v1.png",
+  "output": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\images\\NPC_金姊_透明立繪_v1.png",
+  "size": [
+    1024,
+    1536
+  ],
+  "mode": "RGBA",
+  "source_preserved": true,
+  "source_sha256": "70109ba74929e79eb58ea2a5af978f6386788376997a55ad761d503a6f5a73a9",
+  "output_sha256": "2a8715b67c4665c87df475723cc0b4767367541f7904c91a8fb217909c5684f6",
+  "transparent_pixels": 1103052,
+  "partial_pixels": 7077,
+  "opaque_pixels": 462735,
+  "bbox": [
+    243,
+    30,
+    897,
+    1521
+  ],
+  "method": "Local chroma/darkness segmentation; small hole fill; narrow edge color extension. Source-specific, not general purpose.",
+  "network_used": false,
+  "interior_rgb_preserved": true
+}

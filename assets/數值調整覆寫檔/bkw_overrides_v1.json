@@ -1,0 +1,1241 @@
+{
+  "staff": {
+    "staff_01": {
+      "0": {
+        "g3": 8,
+        "risk": 6,
+        "safety": -4
+      },
+      "1": {
+        "risk": 3,
+        "safety": -2
+      },
+      "2": {
+        "g1": 6,
+        "g3": -3,
+        "fear": -5,
+        "toxicity": -3,
+        "risk": -3,
+        "tol": 5
+      }
+    },
+    "staff_02": {
+      "0": {
+        "g3": 10,
+        "risk": 5,
+        "safety": -5
+      },
+      "1": {
+        "g3": 5,
+        "risk": 2,
+        "safety": -2,
+        "tol": -3
+      },
+      "2": {
+        "g3": -8,
+        "fear": -4,
+        "toxicity": -2,
+        "risk": -2
+      }
+    },
+    "staff_03": {
+      "0": {
+        "g3": 8,
+        "risk": 6,
+        "safety": -4
+      },
+      "1": {
+        "risk": 2,
+        "safety": -2
+      },
+      "2": {
+        "g3": -12,
+        "fear": -4,
+        "toxicity": -2,
+        "risk": -2
+      }
+    },
+    "staff_04": {
+      "0": {
+        "g3": 10,
+        "toxicity": 7,
+        "safety": -3
+      },
+      "1": {
+        "g3": 5,
+        "risk": 2,
+        "safety": -1,
+        "tol": -5
+      },
+      "2": {
+        "g1": 8,
+        "g3": -2,
+        "fear": -4,
+        "toxicity": -4,
+        "risk": -4
+      }
+    },
+    "staff_05": {
+      "0": {
+        "g3": -4,
+        "safety": -2,
+        "tol": -5
+      },
+      "1": {
+        "g1": 0,
+        "fear": 4,
+        "risk": -2
+      },
+      "2": {
+        "g3": -4,
+        "fear": -2,
+        "toxicity": -2,
+        "risk": -4,
+        "tol": 5
+      }
+    },
+    "staff_06": {
+      "0": {
+        "g3": 5,
+        "risk": 4,
+        "safety": -2
+      },
+      "1": {
+        "risk": 1,
+        "safety": -1
+      },
+      "2": {
+        "g3": -5,
+        "fear": -3,
+        "toxicity": -1,
+        "risk": -1
+      }
+    },
+    "staff_07": {
+      "0": {
+        "g2": -9,
+        "g3": 8,
+        "safety": -6
+      },
+      "1": {
+        "risk": 2,
+        "safety": -2
+      },
+      "2": {
+        "g3": -5,
+        "fear": -3,
+        "toxicity": -4
+      }
+    },
+    "staff_08": {
+      "0": {
+        "risk": 1,
+        "safety": -1
+      },
+      "1": {
+        "g2": 2,
+        "g3": 0,
+        "safety": 2
+      },
+      "2": {
+        "g3": -3,
+        "fear": -6,
+        "toxicity": -4,
+        "risk": -3
+      }
+    },
+    "staff_09": {
+      "0": {
+        "risk": 2,
+        "safety": -2,
+        "tol": -4
+      },
+      "1": {
+        "g1": 1,
+        "g2": 0,
+        "g3": -1,
+        "fear": 0,
+        "risk": -1,
+        "safety": -1
+      },
+      "2": {
+        "g3": -8,
+        "fear": -4,
+        "toxicity": -2,
+        "safety": 10,
+        "tol": 5
+      }
+    },
+    "staff_10": {
+      "0": {
+        "g3": 8,
+        "risk": 2,
+        "safety": -2,
+        "tol": -5
+      },
+      "1": {
+        "g1": 0,
+        "g2": 0,
+        "g3": 3,
+        "fear": 5
+      },
+      "2": {
+        "g3": 0,
+        "risk": -3,
+        "tol": 5
+      }
+    },
+    "staff_cameo": {
+      "0": {
+        "g3": 6,
+        "safety": -2,
+        "tol": -5
+      },
+      "1": {
+        "fear": 4
+      },
+      "2": {
+        "g3": -5,
+        "risk": -2,
+        "tol": 10
+      }
+    },
+    "staff_11": {
+      "0": {
+        "fear": 16,
+        "risk": 5
+      },
+      "1": {
+        "g2": -3,
+        "g3": 0,
+        "toxicity": 3,
+        "risk": 2
+      },
+      "2": {
+        "g1": 6,
+        "g3": 0,
+        "fear": -2,
+        "toxicity": -4,
+        "risk": -2,
+        "safety": 8
+      }
+    },
+    "staff_12": {
+      "0": {
+        "safety": -5
+      },
+      "1": {
+        "risk": 1
+      },
+      "2": {
+        "g3": -5,
+        "fear": -2,
+        "toxicity": -2,
+        "risk": -1,
+        "safety": 4
+      }
+    },
+    "staff_13": {
+      "0": {
+        "risk": 2,
+        "safety": -2
+      },
+      "1": {
+        "safety": -1
+      },
+      "2": {
+        "g3": -5,
+        "fear": -2,
+        "toxicity": -2,
+        "risk": -1,
+        "safety": 2
+      }
+    },
+    "staff_14": {
+      "0": {
+        "risk": 2,
+        "safety": -5
+      },
+      "1": {
+        "toxicity": 2
+      },
+      "2": {
+        "g3": -7,
+        "fear": -2,
+        "toxicity": -2,
+        "risk": -5,
+        "safety": 5
+      }
+    },
+    "staff_15": {
+      "0": {
+        "g3": 8,
+        "safety": -5
+      },
+      "1": {
+        "risk": 1,
+        "safety": -2
+      },
+      "2": {
+        "g3": -7,
+        "fear": -3,
+        "toxicity": -3,
+        "risk": -1,
+        "safety": 2
+      }
+    },
+    "staff_16": {
+      "0": {
+        "safety": -2
+      },
+      "1": {
+        "risk": 2,
+        "safety": -1
+      },
+      "2": {
+        "g2": 5,
+        "g3": -7,
+        "fear": -5,
+        "toxicity": -3,
+        "risk": -2,
+        "safety": 6
+      }
+    },
+    "staff_hidden": {
+      "0": {
+        "g3": 0,
+        "risk": 3,
+        "safety": -4
+      },
+      "1": {
+        "g3": 0,
+        "toxicity": 3,
+        "risk": 1,
+        "safety": -2
+      },
+      "2": {
+        "g3": -3,
+        "fear": -6,
+        "toxicity": -3,
+        "risk": -2
+      }
+    },
+    "climax": {
+      "0": {
+        "g3": 15,
+        "toxicity": 8,
+        "risk": 10,
+        "safety": -5
+      },
+      "1": {
+        "risk": 2,
+        "safety": -2
+      },
+      "2": {
+        "g3": -10,
+        "fear": -6,
+        "toxicity": -4,
+        "risk": -5
+      }
+    },
+    "dilemma": {
+      "0": {
+        "g3": 6,
+        "safety": -2,
+        "tol": -5
+      },
+      "1": {
+        "g3": 3,
+        "risk": 2,
+        "safety": -1
+      },
+      "2": {
+        "g3": -5,
+        "fear": -2,
+        "toxicity": -2,
+        "risk": -5,
+        "tol": 10
+      }
+    }
+  },
+  "yeh": {
+    "yeh_01": {
+      "0": {
+        "toxicity": 8,
+        "risk": 5,
+        "safety": -5
+      },
+      "1": {
+        "g2": 0,
+        "g3": -2,
+        "toxicity": 4,
+        "risk": 2,
+        "safety": -2
+      },
+      "2": {
+        "g1": -3,
+        "g3": 5,
+        "fear": -2,
+        "toxicity": -2,
+        "risk": -1,
+        "tol": 12
+      }
+    },
+    "yeh_02": {
+      "0": {
+        "g1": 15,
+        "toxicity": 8,
+        "safety": -8
+      },
+      "1": {
+        "toxicity": 4,
+        "risk": 3,
+        "safety": -4
+      },
+      "2": {
+        "g1": 1,
+        "fear": -2,
+        "toxicity": -5,
+        "risk": -2,
+        "tol": 10
+      }
+    },
+    "yeh_03": {
+      "0": {
+        "g1": 3,
+        "toxicity": 7,
+        "safety": -5
+      },
+      "1": {
+        "g1": 1,
+        "g3": 4,
+        "toxicity": 4,
+        "safety": -2
+      },
+      "2": {
+        "g1": 0,
+        "g2": 6,
+        "fear": -2,
+        "toxicity": -2,
+        "risk": -5,
+        "tol": 5
+      }
+    },
+    "yeh_04": {
+      "0": {
+        "g1": 2,
+        "toxicity": 6,
+        "safety": -4
+      },
+      "1": {
+        "g1": 5,
+        "g3": 2,
+        "toxicity": 5,
+        "risk": 2,
+        "safety": -2
+      },
+      "2": {
+        "g1": -2,
+        "g3": 5,
+        "fear": -2,
+        "toxicity": -1,
+        "risk": -3
+      }
+    },
+    "yeh_05": {
+      "0": {
+        "g1": -5,
+        "g3": -5,
+        "toxicity": 6,
+        "risk": 4,
+        "safety": -4
+      },
+      "1": {
+        "toxicity": 3,
+        "risk": 2,
+        "safety": -2
+      },
+      "2": {
+        "g3": 5,
+        "fear": -4,
+        "toxicity": -2,
+        "risk": -5
+      }
+    },
+    "yeh_06": {
+      "0": {
+        "g2": 5,
+        "fear": 8,
+        "risk": 5,
+        "safety": -5,
+        "tol": -10
+      },
+      "1": {
+        "g1": -2,
+        "fear": 2,
+        "risk": 2,
+        "safety": -2,
+        "tol": -3
+      },
+      "2": {
+        "g2": 5,
+        "g3": 5,
+        "fear": -4,
+        "toxicity": -4,
+        "risk": -2,
+        "tol": 12
+      }
+    },
+    "yeh_07": {
+      "0": {
+        "g1": 5,
+        "g3": -7,
+        "toxicity": 6,
+        "risk": 5,
+        "safety": -5
+      },
+      "1": {
+        "g1": 0,
+        "toxicity": 2,
+        "risk": 2,
+        "safety": -2
+      },
+      "2": {
+        "g2": 5,
+        "fear": -3,
+        "toxicity": -3,
+        "risk": -2
+      }
+    },
+    "yeh_08": {
+      "0": {
+        "g1": -2,
+        "g3": -4,
+        "fear": 4,
+        "toxicity": 10,
+        "risk": 3,
+        "safety": -2
+      },
+      "1": {
+        "g1": 0,
+        "fear": 2,
+        "toxicity": 4,
+        "risk": 1
+      },
+      "2": {
+        "g2": 0,
+        "g3": 5,
+        "fear": -3,
+        "toxicity": -6,
+        "risk": -2
+      }
+    },
+    "yeh_09": {
+      "0": {
+        "g1": 0,
+        "g3": -8,
+        "risk": 2,
+        "safety": -2
+      },
+      "1": {
+        "g2": 0,
+        "g3": -4,
+        "fear": 3,
+        "toxicity": 2,
+        "risk": 1,
+        "safety": -1
+      },
+      "2": {
+        "g2": -2,
+        "g3": 5,
+        "fear": -2,
+        "toxicity": -4,
+        "risk": -2
+      }
+    },
+    "yeh_10": {
+      "0": {
+        "g1": 4,
+        "fear": 2,
+        "safety": -2
+      },
+      "1": {
+        "g1": 2,
+        "tol": 5
+      },
+      "2": {
+        "g2": -4,
+        "g3": 7,
+        "fear": -3,
+        "toxicity": -3,
+        "risk": -2,
+        "tol": 10
+      }
+    },
+    "yeh_11": {
+      "0": {
+        "g1": 5,
+        "risk": 4,
+        "safety": -2,
+        "tol": -10
+      },
+      "1": {
+        "safety": -1
+      },
+      "2": {
+        "g3": 5,
+        "fear": -2,
+        "toxicity": -2,
+        "risk": -2,
+        "tol": 10
+      }
+    },
+    "yeh_cameo": {
+      "0": {
+        "fear": 4,
+        "risk": 2,
+        "safety": -2
+      },
+      "1": {
+        "g2": 0,
+        "toxicity": 2,
+        "risk": 1,
+        "safety": -1
+      },
+      "2": {
+        "fear": -2,
+        "toxicity": -2,
+        "risk": -2,
+        "tol": 10
+      }
+    },
+    "yeh_12": {
+      "0": {
+        "g1": 2,
+        "fear": 2,
+        "toxicity": 6,
+        "risk": 2,
+        "safety": -2
+      },
+      "1": {
+        "toxicity": 3,
+        "risk": 1,
+        "safety": -1
+      },
+      "2": {
+        "g1": 0,
+        "g2": 5,
+        "g3": 5,
+        "fear": -2,
+        "toxicity": -4,
+        "risk": -2,
+        "safety": 4
+      }
+    },
+    "yeh_13": {
+      "0": {
+        "g2": 5,
+        "g3": -10,
+        "toxicity": 10,
+        "risk": 10,
+        "safety": -5
+      },
+      "1": {
+        "g2": 3,
+        "fear": 4,
+        "toxicity": 8,
+        "risk": 2,
+        "safety": -2
+      },
+      "2": {
+        "g3": 6,
+        "fear": -2,
+        "toxicity": -5,
+        "risk": -2,
+        "safety": 3
+      }
+    },
+    "yeh_14": {
+      "0": {
+        "g1": -4,
+        "g2": 2,
+        "toxicity": 5,
+        "risk": 2,
+        "safety": -5
+      },
+      "1": {
+        "g2": 2,
+        "fear": 2,
+        "toxicity": 3,
+        "risk": 1,
+        "safety": -2
+      },
+      "2": {
+        "g2": -2,
+        "fear": -2,
+        "toxicity": -3,
+        "risk": -1,
+        "safety": 4
+      }
+    },
+    "yeh_15": {
+      "0": {
+        "g1": 4,
+        "g2": -3,
+        "fear": 7,
+        "toxicity": 10,
+        "safety": -7
+      },
+      "1": {
+        "g1": 0,
+        "g2": -1,
+        "fear": 3,
+        "toxicity": 6,
+        "risk": 2,
+        "safety": -3
+      },
+      "2": {
+        "g1": -2,
+        "g2": 2,
+        "g3": 6,
+        "fear": -4,
+        "toxicity": -6,
+        "risk": -4,
+        "safety": 5
+      }
+    },
+    "yeh_16": {
+      "0": {
+        "g2": 2,
+        "g3": -8,
+        "toxicity": 9,
+        "safety": -10
+      },
+      "1": {
+        "g1": 2,
+        "fear": 3,
+        "risk": 2,
+        "safety": -2
+      },
+      "2": {
+        "g1": -2,
+        "g2": 1,
+        "g3": 7,
+        "fear": -2,
+        "toxicity": -5,
+        "risk": -8,
+        "safety": 5
+      }
+    },
+    "yeh_17": {
+      "0": {
+        "g1": -2,
+        "fear": 8,
+        "toxicity": 8,
+        "safety": -7
+      },
+      "1": {
+        "g2": -2,
+        "fear": 4,
+        "toxicity": 6,
+        "safety": -3
+      },
+      "2": {
+        "g1": 5,
+        "fear": -3,
+        "toxicity": -5,
+        "risk": -2
+      }
+    },
+    "yeh_hidden": {
+      "0": {
+        "safety": -4
+      },
+      "1": {
+        "g1": 2,
+        "g2": -2,
+        "g3": 0,
+        "fear": 2,
+        "toxicity": 4
+      },
+      "2": {
+        "g2": 2,
+        "fear": -2,
+        "toxicity": -4,
+        "risk": -2
+      }
+    },
+    "climax": {
+      "0": {
+        "toxicity": 8,
+        "safety": -5
+      },
+      "1": {
+        "toxicity": 5,
+        "risk": 5,
+        "safety": -3
+      },
+      "2": {
+        "g1": -2,
+        "g2": 3,
+        "g3": 7,
+        "fear": -6,
+        "toxicity": -8,
+        "risk": -4,
+        "tol": 12
+      }
+    },
+    "dilemma": {
+      "0": {
+        "g1": 5,
+        "g3": -7,
+        "fear": 8,
+        "toxicity": 5,
+        "safety": -5
+      },
+      "1": {
+        "g1": 2,
+        "g3": -4,
+        "fear": 2,
+        "toxicity": 6,
+        "safety": -3
+      },
+      "2": {
+        "g1": -2,
+        "fear": -3,
+        "toxicity": -3,
+        "risk": -8,
+        "safety": 5,
+        "tol": 10
+      }
+    }
+  },
+  "hsu": {
+    "hsu_01": {
+      "0": {
+        "toxicity": 6,
+        "safety": -4
+      },
+      "1": {
+        "fear": 4,
+        "toxicity": 14,
+        "risk": 4
+      },
+      "2": {
+        "g1": 0,
+        "g3": 8,
+        "fear": -2,
+        "toxicity": -2,
+        "risk": -2
+      }
+    },
+    "hsu_02": {
+      "0": {
+        "g1": 8,
+        "g3": -10,
+        "toxicity": 8,
+        "tol": -15
+      },
+      "1": {
+        "g3": 5,
+        "fear": 2,
+        "safety": 2,
+        "tol": 5
+      },
+      "2": {
+        "g1": 1,
+        "g2": -5,
+        "fear": -2,
+        "toxicity": -5,
+        "risk": -2,
+        "tol": 10
+      }
+    },
+    "hsu_03": {
+      "0": {
+        "fear": 4,
+        "safety": -5
+      },
+      "1": {
+        "g1": -1,
+        "g2": -2,
+        "fear": 1
+      },
+      "2": {
+        "fear": -1,
+        "toxicity": -1,
+        "risk": -1
+      }
+    },
+    "hsu_04": {
+      "0": {
+        "fear": 4,
+        "safety": -3,
+        "tol": -5
+      },
+      "1": {
+        "g1": 7,
+        "g3": -6,
+        "toxicity": 7,
+        "risk": 5
+      },
+      "2": {
+        "fear": -3,
+        "toxicity": -2,
+        "risk": -2,
+        "tol": 12
+      }
+    },
+    "hsu_05": {
+      "0": {
+        "g2": -3,
+        "toxicity": 6,
+        "safety": -6
+      },
+      "1": {
+        "fear": 2,
+        "toxicity": 7,
+        "risk": 3,
+        "tol": -10
+      },
+      "2": {
+        "g3": 10,
+        "fear": -2,
+        "toxicity": -2,
+        "risk": -1
+      }
+    },
+    "hsu_06": {
+      "0": {
+        "g3": -5,
+        "fear": 3,
+        "toxicity": 5,
+        "risk": 2,
+        "safety": -2
+      },
+      "1": {
+        "fear": 1,
+        "risk": 1,
+        "safety": -1
+      },
+      "2": {
+        "g3": 5,
+        "fear": -2,
+        "toxicity": -5,
+        "risk": -2
+      }
+    },
+    "hsu_07": {
+      "0": {
+        "g1": -1,
+        "g2": -2,
+        "fear": 4,
+        "toxicity": 4,
+        "safety": -2
+      },
+      "1": {
+        "g2": -5,
+        "fear": 2,
+        "toxicity": 7,
+        "safety": -2
+      },
+      "2": {
+        "g1": 5,
+        "g3": 5,
+        "fear": -2,
+        "toxicity": -4
+      }
+    },
+    "hsu_08": {
+      "0": {
+        "g1": -3,
+        "g2": 7,
+        "g3": 5,
+        "fear": 2,
+        "safety": -3
+      },
+      "1": {
+        "fear": 1,
+        "risk": 6,
+        "safety": -1
+      },
+      "2": {
+        "g3": 1,
+        "fear": -5,
+        "toxicity": -1
+      }
+    },
+    "hsu_09": {
+      "0": {
+        "fear": 2,
+        "safety": -5,
+        "tol": -10
+      },
+      "1": {
+        "g2": 1,
+        "g3": 4,
+        "fear": 1,
+        "safety": -1,
+        "tol": -3
+      },
+      "2": {
+        "g1": -5,
+        "g2": 4,
+        "g3": 5,
+        "fear": -1,
+        "toxicity": -1,
+        "tol": 9
+      }
+    },
+    "hsu_10": {
+      "0": {
+        "g2": -1,
+        "toxicity": 4,
+        "safety": -3
+      },
+      "1": {
+        "g2": 0,
+        "g3": 1,
+        "safety": 1
+      },
+      "2": {
+        "g1": -5,
+        "fear": -2,
+        "toxicity": -2,
+        "risk": -3,
+        "tol": 12
+      }
+    },
+    "hsu_cameo": {
+      "0": {
+        "fear": 3,
+        "toxicity": 8,
+        "risk": 2,
+        "safety": -3,
+        "tol": -6
+      },
+      "1": {
+        "fear": 2,
+        "toxicity": 4,
+        "risk": 1,
+        "safety": -1,
+        "tol": -2
+      },
+      "2": {
+        "g1": 0,
+        "g2": 7,
+        "g3": 8,
+        "fear": -3,
+        "toxicity": -5,
+        "risk": -2,
+        "safety": 6,
+        "tol": 7
+      }
+    },
+    "hsu_11": {
+      "0": {
+        "g2": 3,
+        "toxicity": 4,
+        "risk": 2,
+        "safety": -2
+      },
+      "1": {
+        "g3": 0,
+        "fear": 1,
+        "toxicity": 3,
+        "risk": 1,
+        "safety": -1
+      },
+      "2": {
+        "risk": -3,
+        "safety": 5
+      }
+    },
+    "hsu_12": {
+      "0": {
+        "g2": 6,
+        "fear": 6,
+        "toxicity": 6,
+        "safety": -6
+      },
+      "1": {
+        "g2": -4,
+        "g3": 2,
+        "fear": 2,
+        "risk": 3,
+        "safety": -2
+      },
+      "2": {
+        "g2": -2,
+        "g3": 8,
+        "fear": -3,
+        "toxicity": -2,
+        "risk": -4,
+        "safety": 4
+      }
+    },
+    "hsu_13": {
+      "0": {
+        "g2": -3,
+        "fear": 8,
+        "toxicity": 4,
+        "risk": 2,
+        "safety": -6
+      },
+      "1": {
+        "g2": 0,
+        "g3": -3,
+        "fear": 4,
+        "toxicity": 2,
+        "risk": 1,
+        "safety": -3
+      },
+      "2": {
+        "g1": 3,
+        "g2": 5,
+        "g3": 7,
+        "fear": -3,
+        "toxicity": -2,
+        "risk": -2,
+        "safety": 3
+      }
+    },
+    "hsu_14": {
+      "0": {
+        "g2": 2,
+        "toxicity": 10,
+        "risk": 3,
+        "safety": -4
+      },
+      "1": {
+        "g3": 1,
+        "fear": 2,
+        "toxicity": 6,
+        "risk": 1,
+        "safety": -1
+      },
+      "2": {
+        "g3": 6,
+        "fear": -2,
+        "toxicity": -6,
+        "risk": -2,
+        "safety": 5
+      }
+    },
+    "hsu_15": {
+      "0": {
+        "g2": 3,
+        "fear": 2,
+        "toxicity": 7,
+        "risk": 2,
+        "safety": -2
+      },
+      "1": {
+        "g2": -2,
+        "fear": 1,
+        "risk": 1,
+        "safety": -1
+      },
+      "2": {
+        "g2": -5,
+        "g3": 5,
+        "fear": -2,
+        "toxicity": -5,
+        "risk": -2,
+        "safety": 2
+      }
+    },
+    "hsu_16": {
+      "0": {
+        "g1": 10,
+        "g3": 3,
+        "toxicity": 8,
+        "risk": 2,
+        "safety": -2
+      }
+    },
+    "hsu_hidden": {
+      "0": {
+        "safety": -4
+      },
+      "1": {
+        "toxicity": 3,
+        "risk": 2,
+        "safety": -2
+      },
+      "2": {
+        "g1": 2,
+        "g3": 7,
+        "fear": -2,
+        "toxicity": -4,
+        "risk": -2
+      }
+    },
+    "climax": {
+      "0": {
+        "g1": -2,
+        "toxicity": 7,
+        "safety": -5
+      },
+      "1": {
+        "g1": -7,
+        "g3": -8,
+        "fear": 5,
+        "toxicity": 13,
+        "safety": -4,
+        "tol": -15
+      },
+      "2": {
+        "g3": 6,
+        "fear": -2,
+        "toxicity": -1,
+        "tol": 20
+      }
+    },
+    "dilemma": {
+      "0": {
+        "g1": 2,
+        "fear": 4,
+        "toxicity": 7,
+        "safety": -4,
+        "tol": -10
+      },
+      "1": {
+        "g2": 0,
+        "fear": 2,
+        "safety": -2
+      },
+      "2": {
+        "g3": 4,
+        "fear": -3,
+        "toxicity": -2,
+        "tol": 12
+      }
+    }
+  },
+  "chair": {
+    "chair_01": {
+      "0": {
+        "g2": -3,
+        "toxicity": 6,
+        "safety": -4,
+        "tol": -12
+      },
+      "1": {
+        "g2": 2,
+        "toxicity": 12,
+        "safety": -2,
+        "tol": -8
+      },
+      "2": {
+        "g1": -6,
+        "g2": -4,
+        "g3": 6,
+        "fear": -2,
+        "toxicity": -2,
+        "risk": -3,
+        "tol": 15
+      }
+    }
+  }
+}

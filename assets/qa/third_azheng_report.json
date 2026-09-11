@@ -1,0 +1,25 @@
+{
+  "key": "third_azheng",
+  "source": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\archive\\NPC_阿政_生成原稿_v1.png",
+  "output": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\images\\characters\\NPC_阿政_透明立繪_v1.png",
+  "size": [
+    1024,
+    1536
+  ],
+  "mode": "RGBA",
+  "source_preserved": true,
+  "source_sha256": "ac55d3c833b4088f1bec4b32cfa53cd416956f9949245ae45f00b72a8f030281",
+  "output_sha256": "bace7304469f06f068b3c8a6f9b22b954426416f647d53e261b1ba75707a98da",
+  "alpha_threshold": 16,
+  "transparent_pixels": 1160554,
+  "partial_pixels": 384864,
+  "opaque_pixels": 27446,
+  "bbox": [
+    274,
+    25,
+    839,
+    1522
+  ],
+  "method": "Local low-alpha glow removal and alpha-range remap.",
+  "network_used": false
+}

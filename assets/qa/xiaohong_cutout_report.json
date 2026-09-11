@@ -1,0 +1,84 @@
+{
+  "method": "local source-specific chroma/darkness segmentation, connected component, enclosed-hole preservation, narrow-edge matting",
+  "network_used": false,
+  "generative_redrawing": false,
+  "source": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\samples\\paper-collage-v1\\NPC_小宏_造型預覽_尚未去背_v1.png",
+  "output": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\samples\\paper-collage-v1\\NPC_小宏_透明立繪_v2.png",
+  "source_sha256": "c02275b47c2e437724ae347a8e7862f9292da002be2d66902e20acab95f307fe",
+  "output_sha256": "ddbee2f45e59a372f5083cb38726b3555a57e0be03ffb3c42d8d5604510fd607",
+  "source_preserved": true,
+  "mode": "RGBA",
+  "size": [
+    1024,
+    1536
+  ],
+  "transparent_pixels": 1165575,
+  "partial_alpha_pixels": 6256,
+  "opaque_pixels": 401033,
+  "foreground_bbox": [
+    285,
+    16,
+    773,
+    1527
+  ],
+  "opaque_interior_rgb_unchanged": true,
+  "probes": {
+    "shirt": {
+      "xy": [
+        350,
+        535
+      ],
+      "alpha": 255
+    },
+    "badge": {
+      "xy": [
+        471,
+        568
+      ],
+      "alpha": 255
+    },
+    "folder": {
+      "xy": [
+        620,
+        600
+      ],
+      "alpha": 255
+    },
+    "hair": {
+      "xy": [
+        440,
+        120
+      ],
+      "alpha": 255
+    },
+    "left_shoe": {
+      "xy": [
+        410,
+        1460
+      ],
+      "alpha": 255
+    },
+    "right_shoe": {
+      "xy": [
+        714,
+        1480
+      ],
+      "alpha": 255
+    },
+    "outside": {
+      "xy": [
+        20,
+        400
+      ],
+      "alpha": 0
+    },
+    "leg_gap": {
+      "xy": [
+        571,
+        1240
+      ],
+      "alpha": 0
+    }
+  },
+  "limitations": "Source-specific, not for arbitrary photos; edge RGB is extended from nearby foreground to avoid gray fringes."
+}
