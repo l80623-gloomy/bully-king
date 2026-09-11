@@ -198,7 +198,7 @@ footer.foot{margin-top:30px;font-size:11.5px;color:var(--ink-dim);text-align:cen
 /* =========================================================
    版本紀錄（顯示於前端「版本紀錄」畫面）
    ========================================================= */
-const CURRENT_VERSION = 'v1.27';
+const CURRENT_VERSION = 'v1.28';
 const CHANGELOG = [
   {v:'v0.1', isEA:true, date:'2026-09-09', notes:[
     '初版EA原型：單一角色（可換名皮膚），逐步替換畫面的問答流程',
@@ -443,6 +443,9 @@ const CHANGELOG = [
   ]},
   {v:'v1.27', date:'2026-09-11', notes:[
     '徐課長劇本的結局門檻，同樣改依「開發者模式手動覆寫檔」調整過的實際數值重新校準，模擬結果 A～F 六個一般結局都落在 15~22% 左右、隱藏結局 G 約 4.5%，維持均衡分布'
+  ]},
+  {v:'v1.28', date:'2026-09-11', notes:[
+    '吳董劇本的結局門檻，同樣改依「開發者模式手動覆寫檔」調整過的實際數值重新校準，模擬結果 A～F 六個一般結局都落在 15~22% 左右、隱藏結局 G 約 5%，維持均衡分布'
   ]}
 ];
 
@@ -2181,14 +2184,14 @@ function devEndingConditions(pid){
   }
   if(pid==='chair'){
     return [
-      {id:'B', name:nm('B'), cond:'風險（risk）> 61'},
-      {id:'C', name:nm('C'), cond:'毒性（toxicity）> 44（且未先觸發上一條）'},
-      {id:'A', name:nm('A'), cond:'g1 > 50 且 恐懼（fear）> 0 且 g3 < 40（最黑暗結局）'},
+      {id:'B', name:nm('B'), cond:'風險（risk）> 63'},
+      {id:'C', name:nm('C'), cond:'毒性（toxicity）> 40（且未先觸發上一條）'},
+      {id:'A', name:nm('A'), cond:'g1 > 60 且 恐懼（fear）> 18 且 g3 < 43（最黑暗結局）'},
       {id:'G', name:nm('G'), cond:'健康選項比例（ratio）≥ 0.6 且兩難事件選擇健康選項（隱藏結局）'},
       {id:'F', name:nm('F'), cond:'ratio ≥ 0.5'},
       {id:'E', name:nm('E'), cond:'ratio ≥ 0.1 且兩難事件選擇健康選項'},
       {id:'D', name:nm('D'), cond:'以上皆不符合時的預設結局'},
-      {id:'_note', name:'', cond:note}
+      {id:'_note', name:'', cond:'（此角色的門檻是依照開發者模式手動覆寫檔的數值校準，跟其他未手動調整過的角色門檻不是同一套來源）'}
     ];
   }
   if(pid==='hrstaff'){
@@ -2977,9 +2980,10 @@ function computeEnding(){
     return 'D';
   }
   if(S.persona.id==='chair'){
-    if(S.risk>61) return 'B';
-    if(S.toxicity>44) return 'C';
-    if(S.g1>50 && S.fear>0 && S.g3<40) return 'A';
+    // 門檻已依「開發者模式手動覆寫檔」調整過的數值重新校準
+    if(S.risk>63) return 'B';
+    if(S.toxicity>40) return 'C';
+    if(S.g1>60 && S.fear>18 && S.g3<43) return 'A';
     if(ratio>=0.6 && S.dilemmaChoice==='C') return 'G';
     if(ratio>=0.5) return 'F';
     if(ratio>=0.1 && S.dilemmaChoice==='C') return 'E';
