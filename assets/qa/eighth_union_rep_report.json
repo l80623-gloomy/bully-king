@@ -1,0 +1,33 @@
+{
+  "key": "eighth_union_rep",
+  "source": "C:\\Users\\gloom.lai\\.codex\\generated_images\\01a07fa7-77df-7882-bc11-4e0951a8056b\\exec-79594bc1-604b-4e41-93ba-d69e5c4dcdd3.png",
+  "output": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\images\\characters\\NPC_工會代表_透明立繪_v1.png",
+  "size": [
+    1024,
+    1536
+  ],
+  "mode": "RGBA",
+  "source_preserved": true,
+  "source_sha256": "d8685c127979240f1e998629cc2ab3c7a29021a603ad4b753493b0e34a0707d0",
+  "output_sha256": "aca2b2336c79247d01f170baedf8d038b5fbfdd9671d73d24e1c87a366d2879c",
+  "transparent_pixels": 1084865,
+  "partial_pixels": 6474,
+  "opaque_pixels": 481525,
+  "bbox": [
+    204,
+    26,
+    977,
+    1504
+  ],
+  "thresholds": {
+    "chroma": 20.0,
+    "dark": 185.0,
+    "fill_hole_max": 300,
+    "shrink": 0.25,
+    "border_color_distance": 0.0,
+    "remove_bg_like_max": 0
+  },
+  "method": "Local bright-neutral checkerboard segmentation with limited hole fill and narrow edge color extension.",
+  "network_used": false,
+  "interior_rgb_preserved": true
+}

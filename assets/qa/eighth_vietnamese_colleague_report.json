@@ -1,0 +1,33 @@
+{
+  "key": "eighth_vietnamese_colleague",
+  "source": "C:\\Users\\gloom.lai\\.codex\\generated_images\\01a07fa7-77df-7882-bc11-4e0951a8056b\\exec-a11578d2-ac1d-4de6-b17a-ade20531e1ab.png",
+  "output": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\images\\characters\\NPC_越南籍新同事_透明立繪_v1.png",
+  "size": [
+    1024,
+    1536
+  ],
+  "mode": "RGBA",
+  "source_preserved": true,
+  "source_sha256": "a64ac8c9082700953430e159ff86728ba9f166fb77bd403dc51f503310e20f88",
+  "output_sha256": "08877e6af7850e64aa8e8a9adb02c62f9eb18c225900c4f6b50e4957dca29d65",
+  "transparent_pixels": 1175138,
+  "partial_pixels": 5166,
+  "opaque_pixels": 392560,
+  "bbox": [
+    280,
+    21,
+    724,
+    1508
+  ],
+  "thresholds": {
+    "chroma": 20.0,
+    "dark": 185.0,
+    "fill_hole_max": 300,
+    "shrink": 0.25,
+    "border_color_distance": 0.0,
+    "remove_bg_like_max": 0
+  },
+  "method": "Local bright-neutral checkerboard segmentation with limited hole fill and narrow edge color extension.",
+  "network_used": false,
+  "interior_rgb_preserved": true
+}

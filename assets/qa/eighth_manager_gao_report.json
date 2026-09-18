@@ -1,0 +1,33 @@
+{
+  "key": "eighth_manager_gao",
+  "source": "C:\\Users\\gloom.lai\\.codex\\generated_images\\01a07fa7-77df-7882-bc11-4e0951a8056b\\exec-d13751e0-cbf6-4f8d-95b3-99af8c477b53.png",
+  "output": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\images\\characters\\NPC_高經理_透明立繪_v1.png",
+  "size": [
+    1024,
+    1536
+  ],
+  "mode": "RGBA",
+  "source_preserved": true,
+  "source_sha256": "05d24b57185db152d695eb9bc93644c943e4147e21c01e3affc71fe1eb8fa867",
+  "output_sha256": "34f90e35aae1e2ed78c82b3fda1ba60f185189407afa7e138bbcdd51ad54fa99",
+  "transparent_pixels": 1145310,
+  "partial_pixels": 6590,
+  "opaque_pixels": 420964,
+  "bbox": [
+    216,
+    22,
+    893,
+    1520
+  ],
+  "thresholds": {
+    "chroma": 20.0,
+    "dark": 185.0,
+    "fill_hole_max": 300,
+    "shrink": 0.25,
+    "border_color_distance": 0.0,
+    "remove_bg_like_max": 0
+  },
+  "method": "Local bright-neutral checkerboard segmentation with limited hole fill and narrow edge color extension.",
+  "network_used": false,
+  "interior_rgb_preserved": true
+}

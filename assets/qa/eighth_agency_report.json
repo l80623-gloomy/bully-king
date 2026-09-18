@@ -1,0 +1,33 @@
+{
+  "key": "eighth_agency",
+  "source": "C:\\Users\\gloom.lai\\.codex\\generated_images\\01a07fa7-77df-7882-bc11-4e0951a8056b\\exec-c5a68b9f-6efe-4809-a742-d65ec333cd14.png",
+  "output": "C:\\Users\\gloom.lai\\Documents\\職安\\教育訓練\\1.教材\\趣味化遊戲化題材\\《霸凌王》\\assets\\images\\characters\\NPC_仲介窗口_透明立繪_v1.png",
+  "size": [
+    1024,
+    1536
+  ],
+  "mode": "RGBA",
+  "source_preserved": true,
+  "source_sha256": "1c3b5575f9e23c79f8463898aea08dc77bcb2f609299087a3b749579ea87e408",
+  "output_sha256": "b73f701af58b60688e9b04bacc6a4eb5cd75042f94021721bc2372f245f4b8fd",
+  "transparent_pixels": 1111540,
+  "partial_pixels": 6782,
+  "opaque_pixels": 454542,
+  "bbox": [
+    228,
+    19,
+    830,
+    1517
+  ],
+  "thresholds": {
+    "chroma": 20.0,
+    "dark": 185.0,
+    "fill_hole_max": 300,
+    "shrink": 0.25,
+    "border_color_distance": 0.0,
+    "remove_bg_like_max": 0
+  },
+  "method": "Local bright-neutral checkerboard segmentation with limited hole fill and narrow edge color extension.",
+  "network_used": false,
+  "interior_rgb_preserved": true
+}
