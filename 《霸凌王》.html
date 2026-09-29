@@ -207,7 +207,7 @@ footer.foot{margin-top:30px;font-size:11.5px;color:var(--ink-dim);text-align:cen
 /* =========================================================
    版本紀錄（顯示於前端「版本紀錄」畫面）
    ========================================================= */
-const CURRENT_VERSION = 'v1.28.1';
+const CURRENT_VERSION = 'v1.28.2';
 const CHANGELOG = [
   {v:'v0.1', isEA:true, date:'2026-09-09', notes:[
     '初版EA原型：單一角色（可換名皮膚），逐步替換畫面的問答流程',
@@ -506,6 +506,9 @@ const CHANGELOG = [
   ]},
   {v:'v1.28.1', date:'2026-09-23', notes:[
     '全文審視並修正2處誤植的簡體字（「你换來了幾句寒暄」→「你換來了幾句寒暄」；「這個時間點调動」→「這個時間點調動」），確認全篇其餘文字皆為正確繁體字'
+  ]},
+  {v:'v1.28.2', date:'2026-09-29', notes:[
+    '修正結局畫面「隱藏支線已解鎖」提示的顯示條件：原本是累計完成 3 輪就顯示，但隱藏情境實際的解鎖條件是「該角色完成過一輪地獄模式」，兩者不一致，玩家可能照提示去找卻找不到；現在改成完成過地獄模式才顯示，與實際解鎖條件一致'
   ]}
 ];
 
@@ -3183,7 +3186,7 @@ function renderEndingDetails(){
     <div class="gallery">${galleryCells}</div>
     <p class="eyebrow" style="margin-top:18px;">稱號牆</p>
     <div class="titlewall">${m.titles.map(t=>`<span class="tchip">${t}</span>`).join('')}</div>
-    <p style="font-size:12.5px;color:var(--ink-dim);margin-top:10px;">累計完成 <b class="mono">${m.runsCompleted}</b> 輪${m.runsCompleted>=3?'　·　隱藏支線已解鎖':''}</p>
+    <p style="font-size:12.5px;color:var(--ink-dim);margin-top:10px;">累計完成 <b class="mono">${m.runsCompleted}</b> 輪${(m.runsHell||0)>=1?'　·　隱藏支線已解鎖':''}</p>
     ${newlyUnlocked.length? `<div class="feedback-box" style="border-left:3px solid var(--gold);margin-top:14px;"><b>🏆 新解鎖成就：</b>${newlyUnlocked.map(a=>`<div style="margin-top:6px;"><b>${a.name}</b> — ${a.desc}</div>`).join('')}</div>` : ''}
     <div class="continue-row" style="gap:10px;">
       <button class="btn-ghost" onclick="goAchievements()">🏆 成就牆</button>
