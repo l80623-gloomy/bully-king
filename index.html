@@ -174,6 +174,26 @@ body.reckoning #topbar{display:none;}
 @media (max-width:560px){.title-grid{grid-template-columns:repeat(3,1fr);gap:8px;}}
 .title-card{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 6px 12px;border:1px solid var(--gold-fill);border-radius:4px;background:var(--surface-sunk);text-align:center;min-width:0;}
 .title-card img{width:100%;max-width:88px;aspect-ratio:1;height:auto;object-fit:contain;cursor:zoom-in;}
+.gal-section{font-size:17px;margin:22px 0 4px;padding-top:14px;border-top:1px solid var(--border);}
+.gal-head{margin:14px 0 6px;}
+.gal-group{margin:4px 0;}
+.gal-group summary{cursor:pointer;list-style:none;padding:8px 0;font-size:13px;letter-spacing:.06em;color:var(--gold);}
+.gal-group summary::-webkit-details-marker{display:none;}
+.gal-group summary::before{content:'▸　';}
+.gal-group[open] summary::before{content:'▾　';}
+.gal-group summary:focus-visible{outline:2px solid var(--gold-fill);outline-offset:2px;}
+.gal-group .gal-grid{margin-bottom:10px;}
+.gal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
+.gal-grid.people{grid-template-columns:repeat(4,1fr);}
+@media (max-width:560px){.gal-grid{grid-template-columns:repeat(2,1fr);gap:8px;} .gal-grid.people{grid-template-columns:repeat(4,1fr);gap:6px;}}
+.gal-tile{border:1px solid var(--border);border-radius:4px;background:var(--surface-sunk);overflow:hidden;min-width:0;}
+.gal-tile img{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;cursor:zoom-in;}
+.gal-tile.person img{aspect-ratio:2/3;object-fit:contain;}
+.gal-ph{display:flex;align-items:center;justify-content:center;aspect-ratio:3/2;color:var(--ink-dim);font-size:18px;letter-spacing:.2em;opacity:.6;}
+.gal-tile.person .gal-ph{aspect-ratio:2/3;}
+.gal-cap{padding:6px 8px 8px;font-size:12.5px;line-height:1.45;color:var(--ink);}
+.gal-cap span{font-size:11px;color:var(--ink-dim);}
+.gal-tile.locked .gal-cap{color:var(--ink-dim);}
 .title-name{font-size:14.5px;font-weight:700;line-height:1.4;color:var(--gold);}
 .scene-image-zone{aspect-ratio:1536/1024;display:flex;flex-direction:column;justify-content:flex-end;margin:-26px -26px 0;padding:20px 26px 16px;}
 .card.card-bg .eyebrow{color:#ffd479;}
@@ -224,7 +244,7 @@ footer.foot{margin-top:30px;font-size:11.5px;color:var(--ink-dim);text-align:cen
 /* =========================================================
    版本紀錄（顯示於前端「版本紀錄」畫面）
    ========================================================= */
-const CURRENT_VERSION = 'v1.29.3';
+const CURRENT_VERSION = 'v1.29.4';
 const CHANGELOG = [
   {v:'v0.1', isEA:true, date:'2026-09-09', notes:[
     '初版EA原型：單一角色（可換名皮膚），逐步替換畫面的問答流程',
@@ -545,6 +565,12 @@ const CHANGELOG = [
   {v:'v1.29.3', date:'2026-10-01', notes:[
     '成就牆的成就徽章與稱號徽記都可以點擊放大欣賞；另外準備了 1024 px 的高解析版本，只有點開的那一張才會下載，放大後在手機上也清晰，平常瀏覽成就牆的速度不受影響',
     '尚未解鎖的成就維持灰階、不能放大，解鎖之後才看得到完整的彩色徽章'
+  ]},
+  {v:'v1.29.4', date:'2026-10-01', notes:[
+    '成就牆新增「圖庫」分頁，和成就、稱號整合成同一個收藏系統：拿到的結局圖（49 張）、遇見過的人物（主角 7 位、主要配角 21 位、客串人物 9 位）都會收進來，未解鎖的顯示「？？？」，點圖片可以放大欣賞；首頁按鈕改名為「🏆 成就牆・圖庫」',
+    '圖庫解鎖方式：結局圖在拿到該結局時解鎖；主角在角色開放時解鎖；主要配角在完成該角色一輪後解鎖；客串人物在完成任一有他出場的角色劇本後解鎖。結局區依角色分組，有拿到結局的角色預設展開，沒玩過的先收合',
+    '放大檢視不再墊白色底：徽章與透明立繪直接浮在深色背景上，只沿著圖形輪廓加一圈陰影',
+    '結局圖、人物立繪、人物關係圖、角色介紹頁的主角立繪，放大時都改用另外準備的高解析版本（只在點開時才下載），在手機上放大也清晰'
   ]}
 ];
 
@@ -1883,9 +1909,63 @@ const REL_LEGEND = {
   hrstaff: '中上：曾組長｜左上：夏經理｜左下：小葳｜右下：阿政'
 };
 function lgSrc(src){ return src.replace(/\.webp$/, '_lg.webp'); }
+
+/* ---------- 美術圖庫（成就牆的「圖庫」分頁） ---------- */
+const CAMEO_NAMES = { '金姊':'金姊','游廠長':'游廠長','高經理':'高經理','總經理':'總經理','獨立董事':'獨立董事','越南籍':'越南籍新同事','仲介':'仲介窗口','稽核':'稽核人員','工會':'工會代表' };
+let CAMEO_APPEARS = null;
+// 客串人物出現在哪幾位角色的劇本裡（掃一次劇本文字後快取）
+function cameoPersonas(key){
+  if(!CAMEO_APPEARS){
+    CAMEO_APPEARS = {};
+    const texts = {};
+    PERSONA_ORDER.forEach(pid=>{ const p = PERSONAS[pid]; texts[pid] = JSON.stringify([p.pool, p.climax, p.dilemma]); });
+    Object.keys(SUPPORTING_CHAR_PORTRAIT).forEach(k=>{ CAMEO_APPEARS[k] = PERSONA_ORDER.filter(pid=>texts[pid].includes(k)); });
+  }
+  return CAMEO_APPEARS[key] || [];
+}
+function galTile(opts){
+  const cls = opts.kind==='person' ? 'gal-tile person' : 'gal-tile';
+  if(!opts.got) return `<div class="${cls} locked" title="${opts.hint||''}"><div class="gal-ph">？？？</div><div class="gal-cap">${opts.lockedCap||'尚未解鎖'}</div></div>`;
+  return `<div class="${cls}"><img src="${opts.src}" alt="${opts.alt}" loading="lazy" title="點擊放大" onclick="openLightbox('${lgSrc(opts.src)}','${opts.mode||''}')"><div class="gal-cap">${opts.cap}</div></div>`;
+}
+function galleryBody(){
+  let got = 0, total = 0;
+  const count = ok=>{ total++; if(ok) got++; return ok; };
+  const endingSections = PERSONA_ORDER.map(pid=>{
+    const p = PERSONAS[pid]; const m = personaMeta(pid);
+    const tiles = p.endings.map(e=>{
+      const ok = count(m.endings.includes(e.id));
+      return galTile({ got:ok, src:(PERSONA_ENDING_ART[pid]||{})[e.id], alt:e.name, mode:'wide',
+        cap:`<b>${e.id}</b>　${e.name}`, lockedCap:`<b>${e.id}</b>　${e.hidden?'隱藏結局':'尚未解鎖'}` });
+    }).join('');
+    return `<details class="gal-group"${m.endings.length?' open':''}><summary>${p.name}（${p.level}）　${m.endings.length} / ${p.endings.length}</summary><div class="gal-grid">${tiles}</div></details>`;
+  }).join('');
+  const peopleSections = PERSONA_ORDER.map(pid=>{
+    const p = PERSONAS[pid]; const m = personaMeta(pid); const met = (m.runsCompleted||0)>=1;
+    const lead = galTile({ kind:'person', got:count(personaUnlocked(pid)), src:PERSONA_PORTRAIT[pid], alt:p.name,
+      cap:`${p.name}<br><span>${p.level}</span>`, hint:'角色開放後解鎖' });
+    const npcs = p.npcs.map(n=>galTile({ kind:'person', got:count(met), src:NPC_PORTRAIT[pid+':'+n.key], alt:n.name, mode:'float',
+      cap:`${n.name}<br><span>${n.role}</span>`, hint:`完成「${p.name}」一輪後解鎖` })).join('');
+    return `<p class="eyebrow gal-head">${p.name}線</p><div class="gal-grid people">${lead}${npcs}</div>`;
+  }).join('');
+  const cameos = Object.keys(SUPPORTING_CHAR_PORTRAIT).map(k=>{
+    const ok = count(cameoPersonas(k).some(pid=>(personaMeta(pid).runsCompleted||0)>=1));
+    return galTile({ kind:'person', got:ok, src:SUPPORTING_CHAR_PORTRAIT[k], alt:CAMEO_NAMES[k], mode:'float',
+      cap:CAMEO_NAMES[k], hint:'完成一輪有他出場的角色劇本後解鎖' });
+  }).join('');
+  return `
+    <h2 class="scene-title">已收集 ${got} / ${total} 張</h2>
+    <p class="scene-body" style="color:var(--ink-dim);font-size:13.5px;">拿到的結局、遇見過的人物會收進這裡，點圖片可以放大欣賞。</p>
+    <h3 class="gal-section">結局圖</h3>
+    ${endingSections}
+    <h3 class="gal-section">人物</h3>
+    ${peopleSections}
+    <p class="eyebrow gal-head">客串人物</p><div class="gal-grid people">${cameos}</div>
+  `;
+}
 function titleCard(pid, titleName){
   const src = titleBadgeSrc(pid, titleName);
-  return `<div class="title-card">${src?`<img src="${src}" alt="${titleName}" title="點擊放大" onclick="openLightbox('${lgSrc(src)}','badge')" onerror="this.remove()">`:''}<div class="title-name">${titleName}</div></div>`;
+  return `<div class="title-card">${src?`<img src="${src}" alt="${titleName}" title="點擊放大" onclick="openLightbox('${lgSrc(src)}','float')" onerror="this.remove()">`:''}<div class="title-name">${titleName}</div></div>`;
 }
 // 稱號徽記用「角色＋稱號」對應，小雨／阿迪／曾組長都有同名的「覺醒型」，不能只用稱號文字找圖
 function titleBadgeSrc(pid, titleName){
@@ -2117,15 +2197,17 @@ function updateGauges(visibleDeltas, blind){
   });
 }
 function setReckoning(on){ document.body.classList.toggle('reckoning', !!on); }
-// mode：true／'wide' 給橫式圖加寬；'badge' 給透明徽章墊紙色底，讀不到 _lg 高解析檔時退回小圖
+// mode：true／'wide' 給橫式圖加寬；'float' 給透明背景的徽章與立繪，不加框、直接浮在遮罩上
+// 傳入 _lg 高解析檔時，讀不到會自動退回一般尺寸
 function openLightbox(src, mode){
   const img = document.getElementById('portrait-lightbox-img');
-  const badge = mode==='badge';
-  img.onerror = badge ? ()=>{ img.onerror = null; img.src = src.replace(/_lg\.webp$/, '.webp'); } : null;
+  const float = mode==='float';
+  img.onerror = /_lg\.webp$/.test(src) ? ()=>{ img.onerror = null; img.src = src.replace(/_lg\.webp$/, '.webp'); } : null;
   img.src = src;
   img.style.maxWidth = (mode===true || mode==='wide') ? 'min(96vw,1100px)' : '';
-  img.style.background = badge ? 'var(--surface)' : '';
-  img.style.padding = badge ? '20px' : '';
+  img.style.boxShadow = float ? 'none' : '';
+  img.style.borderRadius = float ? '0' : '';
+  img.style.filter = float ? 'drop-shadow(0 12px 28px rgba(0,0,0,.6))' : '';
   document.getElementById('portrait-lightbox').style.display = 'flex';
 }
 window.openLightbox = openLightbox;
@@ -2178,7 +2260,7 @@ function goHome(){
     </div>
     <div class="continue-row" style="justify-content:flex-end;gap:8px;">
       <button class="btn-ghost" onclick="goHowToPlay()">❓ 怎麼玩</button>
-      <button class="btn-ghost" onclick="goAchievements()">🏆 成就牆</button>
+      <button class="btn-ghost" onclick="goAchievements()">🏆 成就牆・圖庫</button>
       ${allPersonasQualified()? `<button class="btn-ghost" style="border-color:var(--gold);color:var(--gold);" onclick="renderFinale()">◆ 總體檢討（全員通關彩蛋）</button>` : ''}
     </div>
     <div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
@@ -2232,7 +2314,9 @@ function goAchievements(tab){
   clearLog(); setGaugesVisible(false); chapterTag.textContent='成就牆';
   const tabBtn = (key,label)=>`<button class="btn-ghost" style="${tab===key?'border-color:var(--gold);color:var(--gold);':''}" onclick="goAchievements('${key}')">${label}</button>`;
   let body = '';
-  if(tab==='titles'){
+  if(tab==='gallery'){
+    body = galleryBody();
+  } else if(tab==='titles'){
     const totalTitles = PERSONA_ORDER.reduce((a,pid)=>a+((META[pid]&&META[pid].titles.length)||0),0);
     const groups = PERSONA_ORDER.map(pid=>{
       const p = PERSONAS[pid]; const m = personaMeta(pid);
@@ -2252,7 +2336,7 @@ function goAchievements(tab){
       const got = ACH_UNLOCKED[a.id];
       const badge = a.image
         ? (got
-          ? `<img src="${a.image}" alt="${a.name}" title="點擊放大" onclick="openLightbox('${lgSrc(a.image)}','badge')" style="width:56px;height:56px;object-fit:contain;flex-shrink:0;cursor:zoom-in;">`
+          ? `<img src="${a.image}" alt="${a.name}" title="點擊放大" onclick="openLightbox('${lgSrc(a.image)}','float')" style="width:56px;height:56px;object-fit:contain;flex-shrink:0;cursor:zoom-in;">`
           : `<img src="${a.image}" alt="" style="width:56px;height:56px;object-fit:contain;flex-shrink:0;filter:grayscale(1) opacity(.55);">`)
         : (got?'🏆':'🔒');
       return `<div class="tier-card" style="cursor:default;display:flex;align-items:center;gap:12px;text-align:left;${got?'':'opacity:.6;'}">
@@ -2274,6 +2358,7 @@ function goAchievements(tab){
     <div class="continue-row" style="justify-content:flex-start;gap:8px;margin-top:0;margin-bottom:16px;">
       ${tabBtn('ach','成就')}
       ${tabBtn('titles','稱號')}
+      ${tabBtn('gallery','圖庫')}
     </div>
     ${body}
     <div class="continue-row"><button class="btn-ghost" onclick="goHome()">返回主畫面</button></div>
@@ -2676,7 +2761,7 @@ function goPersonaSelect(){
         if(!personaUnlocked(pid)){
           return `<div class="tier-card locked" style="opacity:.7;cursor:default;">
             <div class="thead">
-              ${portrait? `<img class="tportrait" src="${portrait}" alt="${p.name}" onclick="event.stopPropagation();openLightbox('${portrait}')">` : ''}
+              ${portrait? `<img class="tportrait" src="${portrait}" alt="${p.name}" onclick="event.stopPropagation();openLightbox('${lgSrc(portrait)}')">` : ''}
               <div>
                 <div class="tlevel">${p.level}</div>
                 <div class="tname">${p.name}</div>
@@ -2688,7 +2773,7 @@ function goPersonaSelect(){
         }
         return `<button class="tier-card" onclick="goPersonaDetail('${pid}')">
           <div class="thead">
-            ${portrait? `<img class="tportrait" src="${portrait}" alt="${p.name}" onclick="event.stopPropagation();openLightbox('${portrait}')">` : ''}
+            ${portrait? `<img class="tportrait" src="${portrait}" alt="${p.name}" onclick="event.stopPropagation();openLightbox('${lgSrc(portrait)}')">` : ''}
             <div>
               <div class="tlevel">${p.level}</div>
               <div class="tname">${p.name}</div>
@@ -2721,14 +2806,14 @@ function goPersonaDetail(pid){
   const hellUnlocked = m.runsCompleted>=1;
   const portrait = PERSONA_PORTRAIT[pid];
   appendCard(`
-    ${portrait? `<img class="portrait-feature" src="${portrait}" alt="${persona.name}" onclick="openLightbox('${portrait}')">` : ''}
+    ${portrait? `<img class="portrait-feature" src="${portrait}" alt="${persona.name}" onclick="openLightbox('${lgSrc(portrait)}')">` : ''}
     <p class="eyebrow">${persona.level} · ${persona.dept}</p>
     <h2 class="scene-title">${persona.name}</h2>
     <p class="scene-body">${persona.blurb}</p>
     <p class="scene-body" style="color:var(--ink-dim);font-size:13.5px;">同場人物：${persona.npcs.map(n=>(n.icon||'')+' '+n.name+'（'+n.role+'）').join('、')}</p>
     <details class="rel-map">
       <summary>👥 人物關係圖</summary>
-      <img src="assets/images/events/rel_${pid}.webp" alt="${persona.name}與${persona.npcs.map(n=>n.name).join('、')}的關係圖" onclick="openLightbox(this.src, true)" onerror="this.closest('details').remove()">
+      <img src="assets/images/events/rel_${pid}.webp" alt="${persona.name}與${persona.npcs.map(n=>n.name).join('、')}的關係圖" onclick="openLightbox('assets/images/events/rel_${pid}_lg.webp','wide')" onerror="this.closest('details').remove()">
       ${REL_LEGEND[pid]? `<p class="rel-legend">${REL_LEGEND[pid]}</p>` : ''}
     </details>
     ${m.runsCompleted>0? `<div class="meta-row">
