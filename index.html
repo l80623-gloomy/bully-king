@@ -169,6 +169,12 @@ body.reckoning #topbar{display:none;}
 .rel-map[open] summary::after{content:'　▾ 收合';}
 .rel-map summary:focus-visible{outline:2px solid var(--gold-fill);outline-offset:2px;}
 .rel-map img{display:block;width:100%;height:auto;margin-top:10px;border-radius:3px;cursor:zoom-in;}
+.rel-legend{margin:8px 0 0;font-size:13px;line-height:1.7;color:var(--ink-dim);}
+.title-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:8px 0;}
+@media (max-width:560px){.title-grid{grid-template-columns:repeat(3,1fr);gap:8px;}}
+.title-card{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 6px 12px;border:1px solid var(--gold-fill);border-radius:4px;background:var(--surface-sunk);text-align:center;min-width:0;}
+.title-card img{width:100%;max-width:88px;aspect-ratio:1;height:auto;object-fit:contain;}
+.title-name{font-size:14.5px;font-weight:700;line-height:1.4;color:var(--gold);}
 .scene-image-zone{aspect-ratio:1536/1024;display:flex;flex-direction:column;justify-content:flex-end;margin:-26px -26px 0;padding:20px 26px 16px;}
 .card.card-bg .eyebrow{color:#ffd479;}
 .card.card-bg .scene-title{color:#fff;}
@@ -218,7 +224,7 @@ footer.foot{margin-top:30px;font-size:11.5px;color:var(--ink-dim);text-align:cen
 /* =========================================================
    版本紀錄（顯示於前端「版本紀錄」畫面）
    ========================================================= */
-const CURRENT_VERSION = 'v1.29.1';
+const CURRENT_VERSION = 'v1.29.2';
 const CHANGELOG = [
   {v:'v0.1', isEA:true, date:'2026-09-09', notes:[
     '初版EA原型：單一角色（可換名皮膚），逐步替換畫面的問答流程',
@@ -531,6 +537,10 @@ const CHANGELOG = [
   {v:'v1.29.1', date:'2026-10-01', notes:[
     '角色介紹頁（選角後、開始前）新增「👥 人物關係圖」收合按鈕：點開可以看到主角與三位同場人物的職權高低、支持與壓力關係，七位角色各一張；預設收合，不會把「開始這一輪」按鈕擠到下面',
     '點關係圖可以放大檢視；放大視窗針對橫式圖加寬，主角立繪的放大方式不變'
+  ]},
+  {v:'v1.29.2', date:'2026-10-01', notes:[
+    '人物關係圖下方加上位置說明（例如「中：小雨｜左上：邱經理｜右上：人資窗口｜右下：小魚」），圖上沒有寫名字，第一次玩也認得出誰是誰；七張圖的人物位置都依正式立繪逐一比對過',
+    '成就牆的「稱號」分頁改成卡片排列：徽記放大到原本的近三倍，稱號文字也放大加粗，一眼就能看清收集到的稱號'
   ]}
 ];
 
@@ -1858,6 +1868,20 @@ const PERSONA_ENDING_ART = {};
   const base = 'assets/images/events/end_'+pid+'_';
   PERSONA_ENDING_ART[pid] = { A:base+'dark.webp', B:base+'b.webp', C:base+'c.webp', D:base+'d.webp', E:base+'awaken.webp', F:base+'positive.webp', G:base+'g.webp' };
 });
+// 人物關係圖（REL01～07）上沒有文字，位置說明依正式立繪逐張比對
+const REL_LEGEND = {
+  yeh:     '中上：葉經理｜左：陳桑｜下：小宏｜右：雅婷',
+  hsu:     '中上：徐課長｜左：阿柱｜下：小杰｜右：建宏',
+  staff:   '左中：老陳｜右中：小美｜左下：阿宏｜右上：林襄理',
+  chair:   '中上：吳董｜左上：王協理｜右上：周處長｜下方人群中：基層員工代表',
+  target:  '中：小雨｜左上：邱經理｜右上：人資窗口｜右下：小魚',
+  migrant: '中：阿迪｜左上：林班長｜右中：阿仁｜右下：小凱',
+  hrstaff: '中上：曾組長｜左上：夏經理｜左下：小葳｜右下：阿政'
+};
+function titleCard(pid, titleName){
+  const src = titleBadgeSrc(pid, titleName);
+  return `<div class="title-card">${src?`<img src="${src}" alt="" onerror="this.remove()">`:''}<div class="title-name">${titleName}</div></div>`;
+}
 // 稱號徽記用「角色＋稱號」對應，小雨／阿迪／曾組長都有同名的「覺醒型」，不能只用稱號文字找圖
 function titleBadgeSrc(pid, titleName){
   const map = PERSONAS[pid] && PERSONAS[pid].personalityMap;
@@ -2205,7 +2229,7 @@ function goAchievements(tab){
       if(!m.titles.length) return '';
       return `<div style="margin-bottom:16px;">
         <p class="eyebrow" style="margin-bottom:6px;">${p.name}（${p.level}）</p>
-        <div class="titlewall">${m.titles.map(t=>titleChip(pid,t)).join('')}</div>
+        <div class="title-grid">${m.titles.map(t=>titleCard(pid,t)).join('')}</div>
       </div>`;
     }).join('');
     body = `
@@ -2691,6 +2715,7 @@ function goPersonaDetail(pid){
     <details class="rel-map">
       <summary>👥 人物關係圖</summary>
       <img src="assets/images/events/rel_${pid}.webp" alt="${persona.name}與${persona.npcs.map(n=>n.name).join('、')}的關係圖" onclick="openLightbox(this.src, true)" onerror="this.closest('details').remove()">
+      ${REL_LEGEND[pid]? `<p class="rel-legend">${REL_LEGEND[pid]}</p>` : ''}
     </details>
     ${m.runsCompleted>0? `<div class="meta-row">
       <div class="meta-tile"><div class="mv">${m.runsCompleted}</div><div class="ml">累計輪數</div></div>
