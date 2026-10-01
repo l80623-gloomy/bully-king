@@ -173,7 +173,7 @@ body.reckoning #topbar{display:none;}
 .title-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:8px 0;}
 @media (max-width:560px){.title-grid{grid-template-columns:repeat(3,1fr);gap:8px;}}
 .title-card{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 6px 12px;border:1px solid var(--gold-fill);border-radius:4px;background:var(--surface-sunk);text-align:center;min-width:0;}
-.title-card img{width:100%;max-width:88px;aspect-ratio:1;height:auto;object-fit:contain;}
+.title-card img{width:100%;max-width:88px;aspect-ratio:1;height:auto;object-fit:contain;cursor:zoom-in;}
 .title-name{font-size:14.5px;font-weight:700;line-height:1.4;color:var(--gold);}
 .scene-image-zone{aspect-ratio:1536/1024;display:flex;flex-direction:column;justify-content:flex-end;margin:-26px -26px 0;padding:20px 26px 16px;}
 .card.card-bg .eyebrow{color:#ffd479;}
@@ -224,7 +224,7 @@ footer.foot{margin-top:30px;font-size:11.5px;color:var(--ink-dim);text-align:cen
 /* =========================================================
    版本紀錄（顯示於前端「版本紀錄」畫面）
    ========================================================= */
-const CURRENT_VERSION = 'v1.29.2';
+const CURRENT_VERSION = 'v1.29.3';
 const CHANGELOG = [
   {v:'v0.1', isEA:true, date:'2026-09-09', notes:[
     '初版EA原型：單一角色（可換名皮膚），逐步替換畫面的問答流程',
@@ -541,6 +541,10 @@ const CHANGELOG = [
   {v:'v1.29.2', date:'2026-10-01', notes:[
     '人物關係圖下方加上位置說明（例如「中：小雨｜左上：邱經理｜右上：人資窗口｜右下：小魚」），圖上沒有寫名字，第一次玩也認得出誰是誰；七張圖的人物位置都依正式立繪逐一比對過',
     '成就牆的「稱號」分頁改成卡片排列：徽記放大到原本的近三倍，稱號文字也放大加粗，一眼就能看清收集到的稱號'
+  ]},
+  {v:'v1.29.3', date:'2026-10-01', notes:[
+    '成就牆的成就徽章與稱號徽記都可以點擊放大欣賞；另外準備了 1024 px 的高解析版本，只有點開的那一張才會下載，放大後在手機上也清晰，平常瀏覽成就牆的速度不受影響',
+    '尚未解鎖的成就維持灰階、不能放大，解鎖之後才看得到完整的彩色徽章'
   ]}
 ];
 
@@ -1878,9 +1882,10 @@ const REL_LEGEND = {
   migrant: '中：阿迪｜左上：林班長｜右中：阿仁｜右下：小凱',
   hrstaff: '中上：曾組長｜左上：夏經理｜左下：小葳｜右下：阿政'
 };
+function lgSrc(src){ return src.replace(/\.webp$/, '_lg.webp'); }
 function titleCard(pid, titleName){
   const src = titleBadgeSrc(pid, titleName);
-  return `<div class="title-card">${src?`<img src="${src}" alt="" onerror="this.remove()">`:''}<div class="title-name">${titleName}</div></div>`;
+  return `<div class="title-card">${src?`<img src="${src}" alt="${titleName}" title="點擊放大" onclick="openLightbox('${lgSrc(src)}','badge')" onerror="this.remove()">`:''}<div class="title-name">${titleName}</div></div>`;
 }
 // 稱號徽記用「角色＋稱號」對應，小雨／阿迪／曾組長都有同名的「覺醒型」，不能只用稱號文字找圖
 function titleBadgeSrc(pid, titleName){
@@ -2112,10 +2117,15 @@ function updateGauges(visibleDeltas, blind){
   });
 }
 function setReckoning(on){ document.body.classList.toggle('reckoning', !!on); }
-function openLightbox(src, wide){
+// mode：true／'wide' 給橫式圖加寬；'badge' 給透明徽章墊紙色底，讀不到 _lg 高解析檔時退回小圖
+function openLightbox(src, mode){
   const img = document.getElementById('portrait-lightbox-img');
+  const badge = mode==='badge';
+  img.onerror = badge ? ()=>{ img.onerror = null; img.src = src.replace(/_lg\.webp$/, '.webp'); } : null;
   img.src = src;
-  img.style.maxWidth = wide ? 'min(96vw,1100px)' : '';
+  img.style.maxWidth = (mode===true || mode==='wide') ? 'min(96vw,1100px)' : '';
+  img.style.background = badge ? 'var(--surface)' : '';
+  img.style.padding = badge ? '20px' : '';
   document.getElementById('portrait-lightbox').style.display = 'flex';
 }
 window.openLightbox = openLightbox;
@@ -2240,7 +2250,11 @@ function goAchievements(tab){
     const unlockedCount = ACHIEVEMENTS.filter(a=>ACH_UNLOCKED[a.id]).length;
     const rows = ACHIEVEMENTS.map(a=>{
       const got = ACH_UNLOCKED[a.id];
-      const badge = a.image ? `<img src="${a.image}" alt="" style="width:56px;height:56px;object-fit:contain;flex-shrink:0;${got?'':'filter:grayscale(1) opacity(.55);'}">` : (got?'🏆':'🔒');
+      const badge = a.image
+        ? (got
+          ? `<img src="${a.image}" alt="${a.name}" title="點擊放大" onclick="openLightbox('${lgSrc(a.image)}','badge')" style="width:56px;height:56px;object-fit:contain;flex-shrink:0;cursor:zoom-in;">`
+          : `<img src="${a.image}" alt="" style="width:56px;height:56px;object-fit:contain;flex-shrink:0;filter:grayscale(1) opacity(.55);">`)
+        : (got?'🏆':'🔒');
       return `<div class="tier-card" style="cursor:default;display:flex;align-items:center;gap:12px;text-align:left;${got?'':'opacity:.6;'}">
         ${badge}
         <div>
