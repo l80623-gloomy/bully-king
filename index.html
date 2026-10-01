@@ -138,7 +138,9 @@ body.reckoning #topbar{display:none;}
 .gcell .gname{font-size:12.5px;font-weight:700;}
 .gcell .gsub{font-size:10.5px;color:var(--ink-dim);}
 .titlewall{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;}
-.tchip{font-size:12px;padding:5px 10px;border:1px solid var(--gold-fill);border-radius:12px;color:var(--gold);}
+.tchip{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:5px 10px;border:1px solid var(--gold-fill);border-radius:12px;color:var(--gold);}
+.tchip img{width:30px;height:30px;object-fit:contain;margin:-4px 0 -4px -6px;}
+.card-hero-img{display:block;width:calc(100% + 52px);max-width:none;height:auto;margin:-26px -26px 18px;border-radius:3px 3px 0 0;}
 
 .meta-row{display:flex;gap:18px;margin:20px 0;flex-wrap:wrap;}
 .meta-tile{font-family:"JetBrains Mono",monospace;}
@@ -166,6 +168,7 @@ body.reckoning #topbar{display:none;}
 .card.card-bg .opt-btn{background:rgba(10,10,10,.55);border-color:rgba(255,255,255,.3);color:#fff;}
 .card.card-bg .opt-btn:hover{border-color:var(--gold-fill);}
 .card.card-bg .feedback-box{background:rgba(10,10,10,.55);border-color:rgba(255,255,255,.3);color:#f0f0f0;}
+.card.card-bg .feedback-box b{color:#fff;}
 .card.card-bg .voice-line{background:rgba(10,10,10,.5);color:#f0f0f0;border-left-color:rgba(255,255,255,.35);}
 .card.card-bg .chosen-line{background:rgba(10,10,10,.55);border-left-color:rgba(255,255,255,.35);color:#fff;}
 .card.card-bg .chosen-line .ctag{color:#ffd479;}
@@ -207,7 +210,7 @@ footer.foot{margin-top:30px;font-size:11.5px;color:var(--ink-dim);text-align:cen
 /* =========================================================
    版本紀錄（顯示於前端「版本紀錄」畫面）
    ========================================================= */
-const CURRENT_VERSION = 'v1.28.2';
+const CURRENT_VERSION = 'v1.29';
 const CHANGELOG = [
   {v:'v0.1', isEA:true, date:'2026-09-09', notes:[
     '初版EA原型：單一角色（可換名皮膚），逐步替換畫面的問答流程',
@@ -509,6 +512,13 @@ const CHANGELOG = [
   ]},
   {v:'v1.28.2', date:'2026-09-29', notes:[
     '修正結局畫面「隱藏支線已解鎖」提示的顯示條件：原本是累計完成 3 輪就顯示，但隱藏情境實際的解鎖條件是「該角色完成過一輪地獄模式」，兩者不一致，玩家可能照提示去找卻找不到；現在改成完成過地獄模式才顯示，與實際解鎖條件一致'
+  ]},
+  {v:'v1.29', date:'2026-10-01', notes:[
+    '49 個結局全部有專屬結局圖：新增 28 張 B、C、D 結局與隱藏結局 G 的專圖（七位角色各 4 張），A、E、F 沿用原本的角色結局圖，不再有兩個結局共用同一張圖的情況',
+    '七位角色的序幕補上專屬情境圖，開場第一張卡就有畫面',
+    '新增 35 枚稱號徽記：稱號牆（結局後與成就牆）的每個稱號旁都有對應徽記，人格分析報告也會顯示大圖；小雨、阿迪、曾組長同名的「覺醒型」各自有不同的徽記',
+    '首頁加上七位主角的主視覺；「怎麼玩」加上遊戲流程圖；「合理化檢查」加上專屬背景；「總體檢討」加上七角色收藏群像',
+    '修正：有背景圖的卡片中，提示框的粗體標題（例如「系統提示」「本輪詞條」「臨界點」）與結局卡上方的結局編號小字在深色底上看不清楚；「總體檢討」第一張卡的圖片左右出現黑邊'
   ]}
 ];
 
@@ -1829,17 +1839,23 @@ const SUPPORTING_CHAR_PORTRAIT = {
   '稽核': 'assets/images/characters/npc_auditor.webp',
   '工會': 'assets/images/characters/npc_unionrep.webp'
 };
-// 每位角色專屬的三段式結局圖：dark 對應 A~D、awaken 對應 E、positive 對應 F~G
+// 49 個具名結局一對一：A／E／F 沿用三段式家族圖（dark／awaken／positive），B／C／D／G 為各自的專圖
 // 缺項時 renderEnding() 會自動退回 END01~END03 共用圖，不會出現空白畫面
-const PERSONA_ENDING_ART = {
-  yeh:     { dark:'assets/images/events/end_yeh_dark.webp',     awaken:'assets/images/events/end_yeh_awaken.webp',     positive:'assets/images/events/end_yeh_positive.webp' },
-  hsu:     { dark:'assets/images/events/end_hsu_dark.webp',     awaken:'assets/images/events/end_hsu_awaken.webp',     positive:'assets/images/events/end_hsu_positive.webp' },
-  staff:   { dark:'assets/images/events/end_staff_dark.webp',   awaken:'assets/images/events/end_staff_awaken.webp',   positive:'assets/images/events/end_staff_positive.webp' },
-  chair:   { dark:'assets/images/events/end_chair_dark.webp',   awaken:'assets/images/events/end_chair_awaken.webp',   positive:'assets/images/events/end_chair_positive.webp' },
-  target:  { dark:'assets/images/events/end_target_dark.webp',  awaken:'assets/images/events/end_target_awaken.webp',  positive:'assets/images/events/end_target_positive.webp' },
-  migrant: { dark:'assets/images/events/end_migrant_dark.webp', awaken:'assets/images/events/end_migrant_awaken.webp', positive:'assets/images/events/end_migrant_positive.webp' },
-  hrstaff: { dark:'assets/images/events/end_hrstaff_dark.webp', awaken:'assets/images/events/end_hrstaff_awaken.webp', positive:'assets/images/events/end_hrstaff_positive.webp' }
-};
+const PERSONA_ENDING_ART = {};
+['yeh','hsu','staff','chair','target','migrant','hrstaff'].forEach(pid=>{
+  const base = 'assets/images/events/end_'+pid+'_';
+  PERSONA_ENDING_ART[pid] = { A:base+'dark.webp', B:base+'b.webp', C:base+'c.webp', D:base+'d.webp', E:base+'awaken.webp', F:base+'positive.webp', G:base+'g.webp' };
+});
+// 稱號徽記用「角色＋稱號」對應，小雨／阿迪／曾組長都有同名的「覺醒型」，不能只用稱號文字找圖
+function titleBadgeSrc(pid, titleName){
+  const map = PERSONAS[pid] && PERSONAS[pid].personalityMap;
+  const key = map && Object.keys(map).find(k=>map[k].name===titleName);
+  return key ? `assets/images/events/tlt_${pid}_${key}.webp` : null;
+}
+function titleChip(pid, titleName){
+  const src = titleBadgeSrc(pid, titleName);
+  return `<span class="tchip">${src?`<img src="${src}" alt="" onerror="this.remove()">`:''}${titleName}</span>`;
+}
 function resolveCharPortraits(ev){
   if(ev.banner) return [];
   const list = [];
@@ -2104,6 +2120,7 @@ function goHome(){
   document.getElementById('victim-overlay').style.display='none';
   chapterTag.textContent='尚未開始';
   appendCard(`
+    <img class="card-hero-img" src="assets/images/events/key_visual.webp" alt="《霸凌王》七位主角" onerror="this.remove()">
     <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;">教育訓練互動教材 · 正式版 ${CURRENT_VERSION}</div>
     <h1 style="font-size:30px;margin:0 0 10px;">《霸凌王》</h1>
     <p class="scene-body" style="color:var(--ink-dim);">職場霸凌不只是主管對下屬。你可以選擇不同階級的角色，體會由上對下、由下對上、或平行同事之間，各自不一樣的霸凌樣貌——也可以換個角度，體會正在被這樣對待，是什麼感覺。</p>
@@ -2129,6 +2146,7 @@ window.goHome = goHome;
 function goHowToPlay(){
   clearLog(); setGaugesVisible(false); chapterTag.textContent='怎麼玩';
   appendCard(`
+    <img class="card-hero-img" src="assets/images/events/guide_flow.webp" alt="" onerror="this.remove()">
     <p class="eyebrow">❓ 怎麼玩</p>
     <h2 class="scene-title">遊戲流程</h2>
     <p class="scene-body">選一位角色，再選「短劇本」（約2-3分鐘）或「長劇本」（約3-5分鐘），一路做出一連串管理決策。畫面上看得到的三圍會即時變化，還有一些數值會全程隱藏，直到最後的「最終審判」才會一次揭曉。</p>
@@ -2173,7 +2191,7 @@ function goAchievements(tab){
       if(!m.titles.length) return '';
       return `<div style="margin-bottom:16px;">
         <p class="eyebrow" style="margin-bottom:6px;">${p.name}（${p.level}）</p>
-        <div class="titlewall">${m.titles.map(t=>`<span class="tchip">${t}</span>`).join('')}</div>
+        <div class="titlewall">${m.titles.map(t=>titleChip(pid,t)).join('')}</div>
       </div>`;
     }).join('');
     body = `
@@ -2226,12 +2244,15 @@ function renderFinale(){
     </div>`;
   }).join('');
   appendCard(`
-    <p class="eyebrow">◆ 七個角色，七種立場</p>
-    <h2 class="scene-title">總體檢討</h2>
-    <p class="scene-body">你已經走過七個角色的立場：主管對員工、員工對主管、同事對同事、集團高層、被霸凌者本人、語言隔閡下的移工，以及本該是最後防線的人資。</p>
+    <div class="scene-image-zone">
+      <p class="eyebrow">◆ 七個角色，七種立場</p>
+      <h2 class="scene-title">總體檢討</h2>
+    </div>
+    <p class="scene-body" style="margin-top:16px;">你已經走過七個角色的立場：主管對員工、員工對主管、同事對同事、集團高層、被霸凌者本人、語言隔閡下的移工，以及本該是最後防線的人資。</p>
   `, 'assets/images/backgrounds/sys_finale.webp');
   appendCard(`
     <p class="scene-body" style="color:var(--ink-dim);">每一次「這樣做比較有效率」「大家都這樣」「他應該只是比較敏感」的念頭，都是霸凌得以延續的理由。這套教材用反差的方式，讓你先當一次加害者，再回頭看看被害者的樣子——如果你在任何一段故事裡，認出了自己曾經說過的話，那正是這套訓練教材真正想讓你帶走的東西。</p>
+    <img src="assets/images/events/col_finale.webp" alt="七位角色的收藏群像" style="display:block;width:100%;height:auto;border-radius:3px;margin:16px 0;" onerror="this.remove()">
     <div class="tier-grid">${rows}</div>
     <div class="feedback-box">依職業安全衛生法第6條第2項第3款，雇主對於執行職務因他人行為遭受身體或精神不法侵害，應採取預防必要措施。歡迎將本教材用於部門教育訓練，並搭配公司實際的申訴管道與職安通報窗口一起說明。</div>
     <div class="continue-row"><button class="btn-ghost" onclick="goHome()">返回主畫面</button></div>
@@ -2738,8 +2759,10 @@ function render(tag){
 function renderIntro(){
   const p=S.persona;
   appendCard(`
-    <p class="eyebrow">序幕 · ${p.level}上任</p>
-    <h2 class="scene-title">恭喜你，${p.name}</h2>
+    <div class="scene-image-zone">
+      <p class="eyebrow">序幕 · ${p.level}上任</p>
+      <h2 class="scene-title">恭喜你，${p.name}</h2>
+    </div>
     ${p.introLines.map(s=>`<p class="scene-body">${s}</p>`).join('')}
     <div class="feedback-box"><b>系統提示：</b>【霸凌王養成系統啟動】${S.hell?'　<span style="color:var(--crimson)">☠ HR地獄模式已啟動</span>':''}</div>
     ${S.modifier ? `<div class="feedback-box" style="border-left:3px solid var(--gold);display:flex;gap:14px;align-items:flex-start;">
@@ -2747,7 +2770,7 @@ function renderIntro(){
       <div><b>🎴 本輪詞條：${S.modifier.name}</b><br>${S.modifier.desc}</div>
     </div>` : ''}
     <div class="continue-row"><button class="btn-primary" onclick="advance()">接下這個位置</button></div>
-  `);
+  `, `assets/images/events/intro_${p.id}.webp`);
 }
 function renderOptions(card, ev, sourceId){
   card.querySelectorAll('.opt-btn').forEach((btn,i)=>{
@@ -2858,7 +2881,7 @@ function choose(card, opt, npcKey, sourceId, optIndex){
     if(opt.feedback) card.insertAdjacentHTML('beforeend', `<div class="feedback-box">${opt.feedback}</div>`);
     if(blind){
       Object.keys(deltas).forEach(k=>{ S.hiddenDeltaSum[k] = (S.hiddenDeltaSum[k]||0) + deltas[k]; });
-      card.insertAdjacentHTML('beforeend', `<div class="feedback-box" style="font-size:12.5px;color:var(--ink-dim);">🔒 這次的三圍變化先保密，等反差時刻一次揭曉。</div>`);
+      card.insertAdjacentHTML('beforeend', `<div class="feedback-box" style="font-size:12.5px;">🔒 這次的三圍變化先保密，等反差時刻一次揭曉。</div>`);
     } else {
       card.insertAdjacentHTML('beforeend', deltaChipsHtml(S.persona, deltas));
     }
@@ -2901,10 +2924,12 @@ function renderQuiz(n){
   const quizSubmitLine = persona.quizSubmitLine || '系統：嗯，聽起來很合理。';
   if(!recent.length){
     appendCard(`
-      <p class="eyebrow">${quizLabel}</p>
-      <p class="scene-body" style="color:var(--ink-dim);">${quizSkipText}</p>
+      <div class="scene-image-zone">
+        <p class="eyebrow">${quizLabel}</p>
+      </div>
+      <p class="scene-body after-text" style="margin-top:16px;">${quizSkipText}</p>
       <div class="continue-row"><button class="btn-primary" onclick="advance()">繼續</button></div>
-    `);
+    `, 'assets/images/backgrounds/sys_quiz.webp');
     return;
   }
   const bank = persona.rationalize;
@@ -2929,12 +2954,14 @@ function renderQuiz(n){
   }
   items.splice(6);
   const card = appendCard(`
-    <p class="eyebrow">${quizLabel} ${n===1?'I':'II'}</p>
-    <h2 class="scene-title">${quizQuestion}</h2>
-    <p class="scene-body" style="color:var(--ink-dim);font-size:13.5px;">請勾選符合你想法的敘述（可複選）</p>
+    <div class="scene-image-zone">
+      <p class="eyebrow">${quizLabel} ${n===1?'I':'II'}</p>
+      <h2 class="scene-title">${quizQuestion}</h2>
+    </div>
+    <p class="scene-body after-text" style="font-size:13.5px;margin-top:16px;">請勾選符合你想法的敘述（可複選）</p>
     <div class="quiz-list">${items.map((it,i)=>`<label class="quiz-item"><input type="checkbox" data-i="${i}"><span>「${it.phrase}」<br><span style="font-size:11.5px;color:var(--ink-dim);">— 關於：${it.eventTitle}</span></span></label>`).join('')}</div>
     <div class="continue-row"><button class="btn-primary" id="quizSubmit">確定</button></div>
-  `);
+  `, 'assets/images/backgrounds/sys_quiz.webp');
   document.getElementById('quizSubmit').onclick = ()=>{
     const count = card.querySelectorAll('.quiz-item input:checked').length;
     S.toxicity = clamp(S.toxicity + count*5, 0, 200);
@@ -2953,7 +2980,7 @@ function renderQuiz(n){
     card.insertAdjacentHTML('beforeend', `<div class="feedback-box">${quizSubmitLine}</div>`);
     if(blind){
       Object.keys(deltas).forEach(k=>{ S.hiddenDeltaSum[k] = (S.hiddenDeltaSum[k]||0) + deltas[k]; });
-      card.insertAdjacentHTML('beforeend', `<div class="feedback-box" style="font-size:12.5px;color:var(--ink-dim);">🔒 這次的三圍變化先保密，等反差時刻一次揭曉。</div>`);
+      card.insertAdjacentHTML('beforeend', `<div class="feedback-box" style="font-size:12.5px;">🔒 這次的三圍變化先保密，等反差時刻一次揭曉。</div>`);
     } else {
       card.insertAdjacentHTML('beforeend', deltaChipsHtml(persona, deltas));
     }
@@ -3158,10 +3185,10 @@ function renderEnding(){
 
   const endingFamily = ['A','B','C','D'].includes(endId) ? 'dark' : endId==='E' ? 'awaken' : 'positive';
   const endingFallback = { dark:'assets/images/events/end_sealed_case.webp', awaken:'assets/images/events/end_open_door.webp', positive:'assets/images/events/end_repaired_paper.webp' };
-  const endingSymbol = (PERSONA_ENDING_ART[persona.id] && PERSONA_ENDING_ART[persona.id][endingFamily]) || endingFallback[endingFamily];
+  const endingSymbol = (PERSONA_ENDING_ART[persona.id] || {})[endId] || endingFallback[endingFamily];
   appendCard(`
     <div class="scene-image-zone">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--gold);text-transform:uppercase;">結局 ${endId} ${ending.hidden?'· 隱藏結局':''} · ${persona.name} · ${persona.dept}</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;color:#ffd479;text-shadow:0 1px 3px rgba(0,0,0,.8);text-transform:uppercase;">結局 ${endId} ${ending.hidden?'· 隱藏結局':''} · ${persona.name} · ${persona.dept}</div>
       <h2 class="scene-title" style="font-size:26px;margin-top:8px;">${ending.name}</h2>
     </div>
     <p class="scene-body" style="margin-top:16px;">${ending.text}</p>
@@ -3174,9 +3201,13 @@ function renderEndingDetails(){
     const got = m.endings.includes(e.id);
     return `<div class="gcell ${got?'':'locked'}"><div class="gname">${got? e.name:'？？？'}</div><div class="gsub">${got?(e.hidden?'隱藏結局':'已收集'):(e.hidden?'隱藏':'未解鎖')}</div></div>`;
   }).join('');
+  const badge = titleBadgeSrc(persona.id, personality.name);
   appendCard(`
     <p class="eyebrow">人格分析報告</p>
-    <h2 class="scene-title" style="font-size:19px;">${personality.name}</h2>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:6px;">
+      ${badge? `<img src="${badge}" alt="" style="width:96px;height:96px;object-fit:contain;flex-shrink:0;" onerror="this.remove()">` : ''}
+      <h2 class="scene-title" style="font-size:19px;margin:0;">${personality.name}</h2>
+    </div>
     <p class="scene-body">${personality.desc}</p>
     <p class="scene-body" style="color:var(--ink-dim);font-size:14px;">「你最討厭的那種人，有可能只是另一個時空的你。真正可怕的職場之惡，往往不是刻意的惡意，而是把自己曾經受過的傷，當成理所當然地複製下去。」</p>
     <div class="feedback-box">依職業安全衛生法第6條第2項第3款，雇主對於執行職務因他人行為遭受身體或精神不法侵害，應採取預防必要措施；此義務同樣涵蓋上對下、下對上與平行同事間的不法侵害樣態。若您在現實職場中觀察到類似情境，可透過公司內部申訴管道或職安通報窗口提出反映。</div>
@@ -3185,7 +3216,7 @@ function renderEndingDetails(){
     <p class="eyebrow">結局圖鑑（${persona.name}）　${m.endings.length} / ${persona.endings.length}</p>
     <div class="gallery">${galleryCells}</div>
     <p class="eyebrow" style="margin-top:18px;">稱號牆</p>
-    <div class="titlewall">${m.titles.map(t=>`<span class="tchip">${t}</span>`).join('')}</div>
+    <div class="titlewall">${m.titles.map(t=>titleChip(persona.id,t)).join('')}</div>
     <p style="font-size:12.5px;color:var(--ink-dim);margin-top:10px;">累計完成 <b class="mono">${m.runsCompleted}</b> 輪${(m.runsHell||0)>=1?'　·　隱藏支線已解鎖':''}</p>
     ${newlyUnlocked.length? `<div class="feedback-box" style="border-left:3px solid var(--gold);margin-top:14px;"><b>🏆 新解鎖成就：</b>${newlyUnlocked.map(a=>`<div style="margin-top:6px;"><b>${a.name}</b> — ${a.desc}</div>`).join('')}</div>` : ''}
     <div class="continue-row" style="gap:10px;">
