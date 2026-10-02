@@ -244,7 +244,7 @@ footer.foot{margin-top:30px;font-size:11.5px;color:var(--ink-dim);text-align:cen
 /* =========================================================
    版本紀錄（顯示於前端「版本紀錄」畫面）
    ========================================================= */
-const CURRENT_VERSION = 'v1.30.1';
+const CURRENT_VERSION = 'v1.30.2';
 const CHANGELOG = [
   {v:'v0.1', isEA:true, date:'2026-09-09', notes:[
     '初版EA原型：單一角色（可換名皮膚），逐步替換畫面的問答流程',
@@ -583,6 +583,9 @@ const CHANGELOG = [
     '修正小雨線的心裡話標錯人：原本顯示「邱經理心裡：」，但內容其實是小雨自己的心聲；現在改為「小雨心裡：」，並拿掉句首多餘的「（心裡）」',
     '修正小雨線的連續選擇提示：原本連續選第一個選項會說「最強硬的處理方式」，但小雨的第一個選項是隱忍；現在改為「連續把話吞下去」，連續站出來說話時則改為「大家會不會覺得你很難搞？」',
     '成就「連環爆走」「浪子回頭」的說明補上小雨線的解鎖方式'
+  ]},
+  {v:'v1.30.2', date:'2026-10-02', notes:[
+    '「八卦擴散」「回音室」「年終考核季」三個詞條補上剪紙詞條卡美術，序幕畫面會跟其他詞條一樣圖文並排顯示'
   ]}
 ];
 
@@ -2099,9 +2102,9 @@ const RUN_MODIFIERS = [
     if(keys.length){ const k = keys[Math.floor(Math.random()*keys.length)]; st.tol[k] = 30; }
   }},
   {id:'blind_numbers', name:'心裡有數', image:'assets/images/events/mod_blind_numbers.webp', desc:'這輪選完選項後，三圍變化的數字會先保密，直到反差時刻才會一次總結揭曉。'},
-  {id:'gossip', name:'八卦擴散', desc:'這輪對任何一位關係人造成的傷害，有一半會透過八卦傳到其他人身上，一起扣他們的容忍度；但好的互動不會傳開。'},
-  {id:'echo_chamber', name:'回音室', desc:'這輪的系統提示不再提醒你，而是站在組織那一邊：最「有效率」的做法常會被稱讚，溫和、說真話的做法反而被嫌。'},
-  {id:'year_end', name:'年終考核季', desc:'這輪是考核季，最能立刻交差的做法在考核表上特別好看：三圍上升的幅度放大 1.5 倍，但隱藏的制度風險也同步放大 1.3 倍。'}
+  {id:'gossip', name:'八卦擴散', image:'assets/images/events/mod_gossip.webp', desc:'這輪對任何一位關係人造成的傷害，有一半會透過八卦傳到其他人身上，一起扣他們的容忍度；但好的互動不會傳開。'},
+  {id:'echo_chamber', name:'回音室', image:'assets/images/events/mod_echo_chamber.webp', desc:'這輪的系統提示不再提醒你，而是站在組織那一邊：最「有效率」的做法常會被稱讚，溫和、說真話的做法反而被嫌。'},
+  {id:'year_end', name:'年終考核季', image:'assets/images/events/mod_year_end.webp', desc:'這輪是考核季，最能立刻交差的做法在考核表上特別好看：三圍上升的幅度放大 1.5 倍，但隱藏的制度風險也同步放大 1.3 倍。'}
 ];
 // 回音室：選第一個（最強硬／最隱忍）選項時被稱讚，選健康選項時被嫌；小雨是被害者視角，另用一套台詞
 const ECHO_LINES = {
