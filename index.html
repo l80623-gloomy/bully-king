@@ -244,7 +244,7 @@ footer.foot{margin-top:30px;font-size:11.5px;color:var(--ink-dim);text-align:cen
 /* =========================================================
    版本紀錄（顯示於前端「版本紀錄」畫面）
    ========================================================= */
-const CURRENT_VERSION = 'v1.30';
+const CURRENT_VERSION = 'v1.30.1';
 const CHANGELOG = [
   {v:'v0.1', isEA:true, date:'2026-09-09', notes:[
     '初版EA原型：單一角色（可換名皮膚），逐步替換畫面的問答流程',
@@ -578,6 +578,11 @@ const CHANGELOG = [
     '「回音室」：系統提示改站在組織那一邊，選最強硬的做法常會被稱讚「有魄力」，選溫和、說真話的做法反而被嫌「太軟」；連續選擇的提示也換成這種語氣。小雨線另有一套台詞，稱讚的是「識相、不添麻煩」，嫌棄的是「太敏感、太計較」',
     '「年終考核季」：最能立刻交差的那個做法，三圍上升的幅度放大 1.5 倍，但隱藏的制度風險同步放大 1.3 倍，體驗「公司為什麼會獎勵霸凌」',
     '詞條的洗牌袋重新洗過，三個新詞條不必等舊的一輪抽完，馬上就會出現'
+  ]},
+  {v:'v1.30.1', date:'2026-10-02', notes:[
+    '修正小雨線的心裡話標錯人：原本顯示「邱經理心裡：」，但內容其實是小雨自己的心聲；現在改為「小雨心裡：」，並拿掉句首多餘的「（心裡）」',
+    '修正小雨線的連續選擇提示：原本連續選第一個選項會說「最強硬的處理方式」，但小雨的第一個選項是隱忍；現在改為「連續把話吞下去」，連續站出來說話時則改為「大家會不會覺得你很難搞？」',
+    '成就「連環爆走」「浪子回頭」的說明補上小雨線的解鎖方式'
   ]}
 ];
 
@@ -1295,7 +1300,7 @@ chair:{ id:'chair', level:'高階主管', name:'吳董', dept:'集團總部',
 },
 
 /* ---------------- 被霸凌者：小雨（行銷部，受害者視角） ---------------- */
-target:{ id:'target', level:'被霸凌者', name:'小雨', dept:'行銷部',
+target:{ id:'target', voiceSelf:true, level:'被霸凌者', name:'小雨', dept:'行銷部',
   blurb:'到職兩年的行銷專員，半年前換了新主管之後，開始被公開否定、資源被剝奪、加班變成常態。這是唯一一個從受害者視角出發的角色：你不是在決定要不要欺負人，而是在決定自己怎麼撐下去。',
   gauges:[{key:'g1',label:'心理韌性',en:'RESILIENCE',start:55},{key:'g2',label:'職涯處境',en:'CAREER',start:50},{key:'g3',label:'人際支持',en:'SUPPORT',start:35}],
   npcs:[{key:'boss',name:'邱經理',role:'直屬主管',icon:'😠'},{key:'ally',name:'小魚',role:'同期同事',icon:'🤝'},{key:'hr',name:'人資窗口',role:'申訴受理人員',icon:'📋'}],
@@ -1310,7 +1315,7 @@ target:{ id:'target', level:'被霸凌者', name:'小雨', dept:'行銷部',
   pool:[
     {id:'target_01',banner:'assets/images/events/ev114.webp',npc:'boss',title:'公開否定',scene:['部門會議上，你才報告到一半，邱經理就打斷你：「這個想法很幼稚，你到底有沒有做功課？」','全場安靜，你感覺到臉在發燙，卻不知道該不該繼續講下去。'],
       options:[
-        {label:'「對不起，我再重新準備」，把話吞回去，會後獨自留到很晚重做整份提案。',effects:{g1:-10,g2:2,tol:-15},feedback:'案子交出去之後，邱經理只淡淡說了句「這次好一點」，什麼都沒再提。',voice:'（心裡）他甚至沒發現我昨晚只睡了三小時。'},
+        {label:'「對不起，我再重新準備」，把話吞回去，會後獨自留到很晚重做整份提案。',effects:{g1:-10,g2:2,tol:-15},feedback:'案子交出去之後，邱經理只淡淡說了句「這次好一點」，什麼都沒再提。',voice:'他甚至沒發現我昨晚只睡了三小時。'},
         {label:'什麼都沒說，只是在心裡想「會不會真的是我不夠好」。',effects:{g1:-8,toxicity:5,tol:-10},feedback:'那天之後，你在提案前總會先想像被打斷的畫面。'},
         {label:'深呼吸，把話說完：「我準備了三個方案，想先聽完整個脈絡再討論。」',effects:{g3:2,tol:5},feedback:'邱經理皺了皺眉，但沒有再打斷，你把話說完了。',healthy:true}
       ]},
@@ -1421,7 +1426,7 @@ target:{ id:'target', level:'被霸凌者', name:'小雨', dept:'行銷部',
       ]},
     {id:'target_hidden',npc:'ally',title:'小魚也開始保持距離',requires:{hellCompleted:true},banner:'assets/images/events/ev_ally_distancing.webp',scene:['你發現小魚最近開始跟邱經理那群人一起吃午餐，你傳訊息給她，已讀的時間變得很慢，回覆也越來越簡短。'],
       options:[
-        {label:'開始討好邱經理那群人，希望能重新被接納。',effects:{g1:-8,g2:-4,g3:-6,toxicity:6,tol:-15},feedback:'你陪著笑了一整個下午，回到家卻覺得更累了。',voice:'（心裡）我到底在討好誰，為了什麼？'},
+        {label:'開始討好邱經理那群人，希望能重新被接納。',effects:{g1:-8,g2:-4,g3:-6,toxicity:6,tol:-15},feedback:'你陪著笑了一整個下午，回到家卻覺得更累了。',voice:'我到底在討好誰，為了什麼？'},
         {label:'什麼都不說，默默接受自己好像被排除在外了。',effects:{g1:-6,g2:-2,g3:-4,tol:-10},feedback:'你開始習慣一個人吃午餐。'},
         {label:'找一個非工作圈的朋友聊聊，把這段時間的委屈說出來。',effects:{g1:6,g2:2,g3:5,safety:6,tol:8},feedback:'講出來之後，你發現自己並沒有想像中那麼孤單。',healthy:true}
       ]}
@@ -2060,8 +2065,8 @@ const ACHIEVEMENTS = [
   {id:'title_collector', name:'稱號收藏家', image:'assets/images/events/ach_title_collector.webp', hint:'你的稱號牆，已經有點分量了。', desc:'跨角色累積收集 10 個稱號。', check:()=>PERSONA_ORDER.reduce((a,pid)=>a+((META[pid]&&META[pid].titles.length)||0),0)>=10},
   {id:'full_gallery', name:'結局大滿貫', image:'assets/images/events/ach_full_gallery.webp', hint:'把一個人的所有可能，都走過一遍。', desc:'任一角色收集滿該角色的全部結局。', check:()=>PERSONA_ORDER.some(pid=>{const m=META[pid];const p=PERSONAS[pid];return m&&p&&m.endings.length>=p.endings.length;})},
   {id:'no_breakpoint', name:'不動如山', image:'assets/images/events/ach_no_breakpoint.webp', hint:'這一輪，沒有人被你逼到牆角。', desc:'單輪遊玩中，沒有把任何一位角色的容忍度逼到底線。', check:(runState)=>!!(runState&&runState.noBreakRun&&runState.history.length>0)},
-  {id:'streak_harsh', name:'連環爆走', image:'assets/images/events/ach_streak_harsh.webp', hint:'手感正順的時候，很難停下來。', desc:'單輪遊玩中，連續三次選擇最強硬的處理方式。', check:(runState)=>!!(runState&&runState.flags.has('streak_harsh'))},
-  {id:'streak_healthy', name:'浪子回頭', image:'assets/images/events/ach_streak_healthy.webp', hint:'難得，你連續軟了下來。', desc:'單輪遊玩中，連續三次選擇最溫和的處理方式。', check:(runState)=>!!(runState&&runState.flags.has('streak_healthy'))},
+  {id:'streak_harsh', name:'連環爆走', image:'assets/images/events/ach_streak_harsh.webp', hint:'手感正順的時候，很難停下來。', desc:'單輪遊玩中，連續三次選擇最強硬的處理方式（小雨線則是連續三次把話吞下去）。', check:(runState)=>!!(runState&&runState.flags.has('streak_harsh'))},
+  {id:'streak_healthy', name:'浪子回頭', image:'assets/images/events/ach_streak_healthy.webp', hint:'難得，你連續軟了下來。', desc:'單輪遊玩中，連續三次選擇最溫和的處理方式（小雨線則是連續三次站出來說話）。', check:(runState)=>!!(runState&&runState.flags.has('streak_healthy'))},
   {id:'easter_egg', name:'彩蛋獵人', image:'assets/images/events/ach_easter_egg.webp', hint:'有些事，只有走到最後才會被看見。', desc:'觸發過隱藏情境（提示：試試地獄模式）。', check:(runState)=>!!(runState&&runState.history.some(h=>h.id&&h.id.endsWith('_hidden')))},
   {id:'finale_unlocked', name:'通關者', image:'assets/images/events/ach_finale_unlocked.webp', hint:'七段故事，你全都走過一輪，也走過地獄的那一輪。', desc:'七位角色都各自完成過一輪基本模式與一輪地獄模式（解鎖「總體檢討」通關彩蛋的條件）。', check:()=>PERSONA_ORDER.every(personaQualified)},
   {id:'against_the_odds', name:'逆風翻盤', image:'assets/images/events/ach_against_the_odds.webp', hint:'條件明明對你不利，結果卻走向了最好的方向。', desc:'在本輪詞條生效的情況下，拿到任一角色最理想的結局。', check:(runState)=>!!(runState&&runState.modifier&&runState.lastEndId==='G')},
@@ -3011,14 +3016,18 @@ function streakHtml(optIndex){
       if(echo) return `<div class="feedback-box" style="border-left:3px solid var(--gold);"><b>📣 年度之星：</b>${victim
         ? `你已經連續 ${S.streakLen} 次把話吞下去。主管在會議上點名表揚：「大家要學學小雨，從來不給團隊添麻煩。」`
         : `你已經連續 ${S.streakLen} 次用最強硬的方式處理。上面點名表揚：「這才是我們要的主管，有擔當、有魄力。」`}</div>`;
-      return `<div class="feedback-box" style="border-left:3px solid var(--crimson);"><b>⚠ 系統偵測：</b>你已經連續 ${S.streakLen} 次選擇最強硬的處理方式。這種手法，好像變得越來越順手了。</div>`;
+      return `<div class="feedback-box" style="border-left:3px solid var(--crimson);"><b>⚠ 系統偵測：</b>${victim
+        ? `你已經連續 ${S.streakLen} 次把話吞下去、自己扛下來。忍耐，好像慢慢變成了你的習慣。`
+        : `你已經連續 ${S.streakLen} 次選擇最強硬的處理方式。這種手法，好像變得越來越順手了。`}</div>`;
     }
     if(optIndex===2){
       S.flags.add('streak_healthy');
       if(echo) return `<div class="feedback-box"><b>📣 風聲：</b>${victim
         ? `你已經連續 ${S.streakLen} 次把事情說出來。你聽到有人在背後說：「她最近是不是很難相處？」`
         : `你已經連續 ${S.streakLen} 次選擇溫和的方式。上面開始私下議論：「這個人太軟了，下次升遷先不要考慮他。」`}</div>`;
-      return `<div class="feedback-box"><b>系統提示：</b>你已經連續 ${S.streakLen} 次選擇最溫和的處理方式。這樣下去，你什麼時候才能當上霸凌王？</div>`;
+      return `<div class="feedback-box"><b>系統提示：</b>${victim
+        ? `你已經連續 ${S.streakLen} 次站出來說話。這樣下去，大家會不會覺得你很難搞？`
+        : `你已經連續 ${S.streakLen} 次選擇最溫和的處理方式。這樣下去，你什麼時候才能當上霸凌王？`}</div>`;
     }
   }
   return '';
@@ -3090,7 +3099,8 @@ function choose(card, opt, npcKey, sourceId, optIndex){
     }
     if(opt.voice){
       const npc = npcKey ? S.persona.npcs.find(n=>n.key===npcKey) : null;
-      const who = npc ? npc.name : '現場氣氛';
+      // 被害者視角（voiceSelf）的心裡話是主角自己的心聲，不是事件配角的
+      const who = S.persona.voiceSelf ? S.persona.name : (npc ? npc.name : '現場氣氛');
       card.insertAdjacentHTML('beforeend', `<div class="voice-line"><b>${who}心裡：</b>「${opt.voice}」</div>`);
     }
     if(reviewBoosted && !blind) card.insertAdjacentHTML('beforeend', `<div class="feedback-box"><b>📈 年終考核季：</b>這個做法在考核表上特別好看。</div>`);
