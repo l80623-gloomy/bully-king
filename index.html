@@ -244,7 +244,7 @@ footer.foot{margin-top:30px;font-size:11.5px;color:var(--ink-dim);text-align:cen
 /* =========================================================
    版本紀錄（顯示於前端「版本紀錄」畫面）
    ========================================================= */
-const CURRENT_VERSION = 'v1.29.4';
+const CURRENT_VERSION = 'v1.30';
 const CHANGELOG = [
   {v:'v0.1', isEA:true, date:'2026-09-09', notes:[
     '初版EA原型：單一角色（可換名皮膚），逐步替換畫面的問答流程',
@@ -571,6 +571,13 @@ const CHANGELOG = [
     '圖庫解鎖方式：結局圖在拿到該結局時解鎖；主角在角色開放時解鎖；主要配角在完成該角色一輪後解鎖；客串人物在完成任一有他出場的角色劇本後解鎖。結局區依角色分組，有拿到結局的角色預設展開，沒玩過的先收合',
     '放大檢視不再墊白色底：徽章與透明立繪直接浮在深色背景上，只沿著圖形輪廓加一圈陰影',
     '結局圖、人物立繪、人物關係圖、角色介紹頁的主角立繪，放大時都改用另外準備的高解析版本（只在點開時才下載），在手機上放大也清晰'
+  ]},
+  {v:'v1.30', date:'2026-10-02', notes:[
+    '新增三個本輪詞條，詞條從 7 種增加到 10 種：',
+    '「八卦擴散」：對任何一位關係人造成的傷害，有一半會傳到其他關係人身上，一起扣他們的容忍度；好的互動不會傳開。擴散是安靜發生的，只有當有人被擴散到臨界點時才會顯示',
+    '「回音室」：系統提示改站在組織那一邊，選最強硬的做法常會被稱讚「有魄力」，選溫和、說真話的做法反而被嫌「太軟」；連續選擇的提示也換成這種語氣。小雨線另有一套台詞，稱讚的是「識相、不添麻煩」，嫌棄的是「太敏感、太計較」',
+    '「年終考核季」：最能立刻交差的那個做法，三圍上升的幅度放大 1.5 倍，但隱藏的制度風險同步放大 1.3 倍，體驗「公司為什麼會獎勵霸凌」',
+    '詞條的洗牌袋重新洗過，三個新詞條不必等舊的一輪抽完，馬上就會出現'
   ]}
 ];
 
@@ -2086,10 +2093,26 @@ const RUN_MODIFIERS = [
     const keys = Object.keys(st.tol);
     if(keys.length){ const k = keys[Math.floor(Math.random()*keys.length)]; st.tol[k] = 30; }
   }},
-  {id:'blind_numbers', name:'心裡有數', image:'assets/images/events/mod_blind_numbers.webp', desc:'這輪選完選項後，三圍變化的數字會先保密，直到反差時刻才會一次總結揭曉。'}
+  {id:'blind_numbers', name:'心裡有數', image:'assets/images/events/mod_blind_numbers.webp', desc:'這輪選完選項後，三圍變化的數字會先保密，直到反差時刻才會一次總結揭曉。'},
+  {id:'gossip', name:'八卦擴散', desc:'這輪對任何一位關係人造成的傷害，有一半會透過八卦傳到其他人身上，一起扣他們的容忍度；但好的互動不會傳開。'},
+  {id:'echo_chamber', name:'回音室', desc:'這輪的系統提示不再提醒你，而是站在組織那一邊：最「有效率」的做法常會被稱讚，溫和、說真話的做法反而被嫌。'},
+  {id:'year_end', name:'年終考核季', desc:'這輪是考核季，最能立刻交差的做法在考核表上特別好看：三圍上升的幅度放大 1.5 倍，但隱藏的制度風險也同步放大 1.3 倍。'}
 ];
-function loadModifierBag(){ try{ const raw=localStorage.getItem('bkw_modifier_bag_v1'); if(raw){ const arr=JSON.parse(raw); if(Array.isArray(arr)) return arr; } }catch(e){} return []; }
-function saveModifierBag(bag){ try{ localStorage.setItem('bkw_modifier_bag_v1', JSON.stringify(bag)); }catch(e){} }
+// 回音室：選第一個（最強硬／最隱忍）選項時被稱讚，選健康選項時被嫌；小雨是被害者視角，另用一套台詞
+const ECHO_LINES = {
+  praise: ['上面很欣賞你的魄力：「就是要這種人，事情才推得動。」','主管在群組裡按了讚：「這樣處理很果斷。」','隔壁部門的主管私下說：「你們那邊最近的數字很漂亮。」'],
+  scold:  ['上面開始有聲音：「人是不錯，就是太軟，帶不動團隊。」','主管把你叫去：「你對他們太好了，他們只會得寸進尺。」','有人在背後說：「這樣當主管，遲早被下面的人吃定。」'],
+  praiseVictim: ['大家都說你很好相處：「她最識相了，從來不抱怨。」','主管難得點頭：「這次很配合，很好。」','同事私下說：「小雨很懂事，不會給大家添麻煩。」'],
+  scoldVictim:  ['有人在茶水間說：「她是不是太敏感了？」','主管皺眉：「每個人都很辛苦，不要那麼計較。」','群組裡有人酸了一句：「現在的年輕人，一點小事就要講。」']
+};
+function echoLine(kind){
+  const victim = S.persona.id==='target';
+  const pool = ECHO_LINES[kind==='praise' ? (victim?'praiseVictim':'praise') : (victim?'scoldVictim':'scold')];
+  return `<div class="feedback-box"><b>📣 </b>${pool[Math.floor(Math.random()*pool.length)]}</div>`;
+}
+// v2：新增詞條後換新鍵值，讓舊的洗牌袋作廢，新詞條立刻進入抽選
+function loadModifierBag(){ try{ const raw=localStorage.getItem('bkw_modifier_bag_v2'); if(raw){ const arr=JSON.parse(raw); if(Array.isArray(arr)) return arr.filter(id=>RUN_MODIFIERS.some(m=>m.id===id)); } }catch(e){} return []; }
+function saveModifierBag(bag){ try{ localStorage.setItem('bkw_modifier_bag_v2', JSON.stringify(bag)); }catch(e){} }
 let MODIFIER_BAG = loadModifierBag();
 function pickRunModifier(){
   if(!MODIFIER_BAG.length){ MODIFIER_BAG = shuffle(RUN_MODIFIERS.map(m=>m.id)); }
@@ -2292,7 +2315,7 @@ function resetProgress(){
   if(!confirm('確定要清除這台裝置上《霸凌王》的所有紀錄嗎？\n\n包含各角色的結局圖鑑、稱號牆、累計輪數、地獄模式解鎖狀態、成就牆進度，此動作無法復原，且只會影響這台瀏覽器，不會動到其他人的紀錄。')) return;
   try{ localStorage.removeItem('bkw_meta_v2'); }catch(e){}
   try{ localStorage.removeItem('bkw_achievements_v1'); }catch(e){}
-  try{ localStorage.removeItem('bkw_modifier_bag_v1'); }catch(e){}
+  try{ localStorage.removeItem('bkw_modifier_bag_v1'); localStorage.removeItem('bkw_modifier_bag_v2'); }catch(e){}
   META = {};
   ACH_UNLOCKED = {};
   MODIFIER_BAG = [];
@@ -2981,12 +3004,20 @@ function streakHtml(optIndex){
   if(optIndex===S.streakTier){ S.streakLen++; } else { S.streakTier=optIndex; S.streakLen=1; S.streakFired=false; }
   if(S.streakLen>=threshold && !S.streakFired){
     S.streakFired = true;
+    const echo = S.modifier && S.modifier.id==='echo_chamber';
+    const victim = S.persona.id==='target';
     if(optIndex===0){
       S.flags.add('streak_harsh');
+      if(echo) return `<div class="feedback-box" style="border-left:3px solid var(--gold);"><b>📣 年度之星：</b>${victim
+        ? `你已經連續 ${S.streakLen} 次把話吞下去。主管在會議上點名表揚：「大家要學學小雨，從來不給團隊添麻煩。」`
+        : `你已經連續 ${S.streakLen} 次用最強硬的方式處理。上面點名表揚：「這才是我們要的主管，有擔當、有魄力。」`}</div>`;
       return `<div class="feedback-box" style="border-left:3px solid var(--crimson);"><b>⚠ 系統偵測：</b>你已經連續 ${S.streakLen} 次選擇最強硬的處理方式。這種手法，好像變得越來越順手了。</div>`;
     }
     if(optIndex===2){
       S.flags.add('streak_healthy');
+      if(echo) return `<div class="feedback-box"><b>📣 風聲：</b>${victim
+        ? `你已經連續 ${S.streakLen} 次把事情說出來。你聽到有人在背後說：「她最近是不是很難相處？」`
+        : `你已經連續 ${S.streakLen} 次選擇溫和的方式。上面開始私下議論：「這個人太軟了，下次升遷先不要考慮他。」`}</div>`;
       return `<div class="feedback-box"><b>系統提示：</b>你已經連續 ${S.streakLen} 次選擇最溫和的處理方式。這樣下去，你什麼時候才能當上霸凌王？</div>`;
     }
   }
@@ -3001,6 +3032,18 @@ function choose(card, opt, npcKey, sourceId, optIndex){
       Object.keys(effects).forEach(k=>{ dampened[k] = Math.round(effects[k]*0.8); });
       effects = dampened;
     }
+    // 年終考核季：第一個（最能立刻交差的）選項，三圍上升 ×1.5、制度風險 ×1.3；負向變化不放大
+    let reviewBoosted = false;
+    if(S.modifier && S.modifier.id==='year_end' && optIndex===0){
+      const boosted = {};
+      Object.keys(effects).forEach(k=>{
+        const v = effects[k];
+        if((k==='g1'||k==='g2'||k==='g3') && v>0){ boosted[k] = Math.round(v*1.5); reviewBoosted = true; }
+        else if(k==='risk' && v>0){ boosted[k] = Math.round(v*1.3); }
+        else boosted[k] = v;
+      });
+      effects = boosted;
+    }
     let diceHtml = '';
     if(mult!==undefined){
       const scaled = {};
@@ -3014,6 +3057,24 @@ function choose(card, opt, npcKey, sourceId, optIndex){
     const tolBefore = npcKey ? S.tol[npcKey] : null;
     const deltas = applyEffects(effects, npcKey);
     const breakpointHtml = (npcKey && tolBefore>0 && S.tol[npcKey]<=0 && !S.brokenNpcs.has(npcKey)) ? npcBreakpointHtml(npcKey) : '';
+    // 八卦擴散：容忍度下降的一半傳到其他關係人身上，不另外提示，只有被擴散到臨界點時才會顯示
+    let gossipBreakHtml = '';
+    if(S.modifier && S.modifier.id==='gossip' && npcKey && tolBefore!==null){
+      const spread = Math.round((S.tol[npcKey] - tolBefore) * 0.5);
+      if(spread<0){
+        Object.keys(S.tol).forEach(k=>{
+          if(k===npcKey) return;
+          const before = S.tol[k];
+          S.tol[k] = clamp(before + spread, 0, 100);
+          if(before>0 && S.tol[k]<=0 && !S.brokenNpcs.has(k)) gossipBreakHtml += npcBreakpointHtml(k);
+        });
+      }
+    }
+    let echoHtml = '';
+    if(S.modifier && S.modifier.id==='echo_chamber' && sourceId!=='dilemma' && Math.random()<0.5){
+      if(optIndex===0) echoHtml = echoLine('praise');
+      else if(opt.healthy) echoHtml = echoLine('scold');
+    }
     const streakLine = (sourceId!=='dilemma') ? streakHtml(optIndex) : '';
     S.history.push({id:sourceId, npc:npcKey, healthy:!!opt.healthy, tolDelta:(effects.tol!==undefined?effects.tol:0)});
     if(opt.setFlag) S.flags.add(opt.setFlag);
@@ -3032,8 +3093,11 @@ function choose(card, opt, npcKey, sourceId, optIndex){
       const who = npc ? npc.name : '現場氣氛';
       card.insertAdjacentHTML('beforeend', `<div class="voice-line"><b>${who}心裡：</b>「${opt.voice}」</div>`);
     }
+    if(reviewBoosted && !blind) card.insertAdjacentHTML('beforeend', `<div class="feedback-box"><b>📈 年終考核季：</b>這個做法在考核表上特別好看。</div>`);
     if(breakpointHtml) card.insertAdjacentHTML('beforeend', breakpointHtml);
+    if(gossipBreakHtml) card.insertAdjacentHTML('beforeend', gossipBreakHtml);
     if(streakLine) card.insertAdjacentHTML('beforeend', streakLine);
+    else if(echoHtml) card.insertAdjacentHTML('beforeend', echoHtml);
     card.insertAdjacentHTML('beforeend', `<div class="continue-row"><button class="btn-primary" onclick="advance()">繼續</button></div>`);
   };
   if(opt.victim){
