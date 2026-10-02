@@ -244,7 +244,7 @@ footer.foot{margin-top:30px;font-size:11.5px;color:var(--ink-dim);text-align:cen
 /* =========================================================
    版本紀錄（顯示於前端「版本紀錄」畫面）
    ========================================================= */
-const CURRENT_VERSION = 'v1.30.2';
+const CURRENT_VERSION = 'v1.30.3';
 const CHANGELOG = [
   {v:'v0.1', isEA:true, date:'2026-09-09', notes:[
     '初版EA原型：單一角色（可換名皮膚），逐步替換畫面的問答流程',
@@ -586,6 +586,10 @@ const CHANGELOG = [
   ]},
   {v:'v1.30.2', date:'2026-10-02', notes:[
     '「八卦擴散」「回音室」「年終考核季」三個詞條補上剪紙詞條卡美術，序幕畫面會跟其他詞條一樣圖文並排顯示'
+  ]},
+  {v:'v1.30.3', date:'2026-10-02', notes:[
+    '補上最後 4 張情境圖：吳董「難看的調查報告」、曾組長「紅人的申訴案」「阿政的申訴」原本沒有情境圖，吳董「王協理的績效造假疑慮」原本只套用通用的調解室背景，現在都換成專屬情境圖',
+    '逐一檢查 144 個正式情境節點：全部都有一對一專屬情境圖，沒有任何一個沿用通用背景'
   ]}
 ];
 
@@ -1150,7 +1154,7 @@ chair:{ id:'chair', level:'高階主管', name:'吳董', dept:'集團總部',
         {label:'升他，但私下警告他收斂一點。',hellLabel:'核准升遷，同時請人資「適時提醒」management style的部分。',effects:{toxicity:6,risk:4,g1:2,g2:-2,g3:-2},feedback:'',voice:'董事長私下警告我要收斂一點，但升遷令還是照樣發了。我聽懂了，這只是做做樣子。'},
         {label:'要求他先針對申訴案件完成改善，考核通過才能升。',effects:{safety:10,g2:3,g3:2,g1:2},feedback:'',healthy:true}
       ]},
-    {id:'chair_03',npc:'hr',title:'難看的調查報告',scene:['周處長呈上一份全集團「心理安全感」調查，數字很難看。'],
+    {id:'chair_03',banner:'assets/images/events/ev078.webp',npc:'hr',title:'難看的調查報告',scene:['周處長呈上一份全集團「心理安全感」調查，數字很難看。'],
       options:[
         {label:'要求「修飾」對外公布的數字。',hellLabel:'請公關部「妥善包裝」這份報告的對外呈現方式。',effects:{risk:15,toxicity:8,g1:2,g3:-3,g2:-5},feedback:'',
           victim:['我把真實的數字呈上去，換來的是「修飾一下」三個字。','那一刻我知道，說真話在這裡沒有意義。']},
@@ -1207,7 +1211,7 @@ chair:{ id:'chair', level:'高階主管', name:'吳董', dept:'集團總部',
         {label:'稍微看了一下，但沒有特別關注後續。',hellLabel:'知會相關單位留意此案，暫不追蹤。',effects:{toxicity:2,risk:2,g1:-2,g2:-2,g3:-2},feedback:''},
         {label:'親自過問這起案件的後續處理，確保真的有被認真對待。',effects:{safety:5,risk:-3,g1:2,g2:3,g3:3},feedback:'那位課長後來被要求接受工安倫理輔導，案件也留下了正式紀錄。',healthy:true}
       ]},
-    {id:'chair_11',npc:'wang',title:'王協理的績效造假疑慮',banner:'assets/images/backgrounds/bg_mediation_room.webp',scene:['稽核部門私下跟你反映，王協理部門的部分業績數字，疑似有灌水的嫌疑，但王協理是你最倚重的大將。'],
+    {id:'chair_11',npc:'wang',title:'王協理的績效造假疑慮',banner:'assets/images/events/ev079.webp',scene:['稽核部門私下跟你反映，王協理部門的部分業績數字，疑似有灌水的嫌疑，但王協理是你最倚重的大將。'],
       options:[
         {label:'「先不要聲張，我自己跟他談」，私下壓下這件事。',hellLabel:'表示這屬於內部管理事項，將私下處理。',effects:{g1:6,g2:-6,g3:-6,toxicity:6,risk:10,tol:-15},feedback:'這件事後來不了了之，稽核部門私下都知道，數字問題「有人罩」。'},
         {label:'交代稽核部門「再觀察看看」，沒有明確指示。',hellLabel:'請稽核部門持續觀察，暫不介入。',effects:{g2:-4,risk:6,tol:-8,g1:-2,g3:-2},feedback:''},
@@ -1730,7 +1734,7 @@ hrstaff:{ id:'hrstaff', level:'人資／申訴受理', name:'曾組長', dept:'�
         {label:'沒有主動追查，但也把這件事私下當作茶餘飯後的話題。',hellLabel:'內部知悉，未正式處理。',effects:{fear:6,toxicity:4,tol:-8,g3:-2},feedback:''},
         {label:'尊重匿名的用意，依信中內容啟動調查，不追究是誰寫的。',effects:{g3:4,safety:6,g1:-2,tol:8},feedback:'匿名信制度後來更受同仁信賴，因為大家知道，說了不會被抓出來。',healthy:true}
       ]},
-    {id:'hr_07',npc:'accused',title:'紅人的申訴案',scene:['一起申訴案的對象，正是總經理最欣賞的夏經理，你手上的證據其實相當明確。'],
+    {id:'hr_07',banner:'assets/images/events/ev080.webp',npc:'accused',title:'紅人的申訴案',scene:['一起申訴案的對象，正是總經理最欣賞的夏經理，你手上的證據其實相當明確。'],
       options:[
         {label:'找理由把案子「證據不足」結案，避免得罪夏經理。',hellLabel:'綜合評估後，以證據不足結案處理。',effects:{fear:14,g1:6,g2:4,g3:-7,toxicity:6,risk:10,tol:-15},feedback:''},
         {label:'拖著不結案，希望時間久了申訴人自己放棄。',hellLabel:'案件持續調查中，暫不結案。',effects:{fear:7,g2:2,risk:6,tol:-8,g3:-3},feedback:''},
@@ -1793,7 +1797,7 @@ hrstaff:{ id:'hrstaff', level:'人資／申訴受理', name:'曾組長', dept:'�
         {label:'沒有刻意打壓，但也沒有特別替他爭取。',hellLabel:'依標準流程提出考核。',effects:{fear:6,toxicity:4,tol:-8,g2:2},feedback:''},
         {label:'主動在會議上肯定他的具體貢獻，替他爭取升遷機會。',effects:{g3:5,g1:-3,tol:10},feedback:'阿政順利升遷，後來也成為你在部門裡最信任的夥伴。',healthy:true}
       ]},
-    {id:'hr_17',npc:'colleague',title:'阿政的申訴',scene:['阿政私下鼓起勇氣，說想跟你反映，覺得自己長期被分配到不合理的工作量，這其實跟你自己的安排有關。'],
+    {id:'hr_17',banner:'assets/images/events/ev081.webp',npc:'colleague',title:'阿政的申訴',scene:['阿政私下鼓起勇氣，說想跟你反映，覺得自己長期被分配到不合理的工作量，這其實跟你自己的安排有關。'],
       options:[
         {label:'「我還不是這樣一路熬過來的，你這樣算好命了」，把他的反映當耳邊風。',hellLabel:'表示這是磨練的一部分，建議調整心態。',effects:{fear:11,g1:6,g2:3,g3:-7,tol:-18},feedback:''},
         {label:'表面上說會改善，但實際上沒有做出任何調整。',hellLabel:'表示會納入考量，後續觀察。',effects:{fear:5,g2:2,tol:-8,g3:-3},feedback:''},
